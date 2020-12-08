@@ -1,0 +1,125 @@
+/* @theme unpoly2-slides */
+
+@import 'default';
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,700;1,300;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
+
+html {
+}
+
+section {
+  /* --highlight-color: #dd4232; */
+  font-family: Roboto, sans-serif;
+  font-size: 25px;
+  line-height: 1.35;
+}
+
+section:not(.no-watermark):not(.title) {
+  background-image: url('./images/unpoly2.svg');
+  background-position: top 40px right 40px;
+  background-size: 250px;
+  background-repeat: no-repeat;
+}
+
+.muted {
+  opacity: 0.5;
+}
+
+h1 {
+  xfont-size: 2em;
+  color: #3366bb;
+  color: #ff3366;
+  color: #f43;
+  xfont-family: Orbitron, sans-serif;
+  xtext-transform: uppercase;
+  position: relative;
+}
+
+/*
+h1:before {
+  content: '';
+  position: absolute;
+  top: 0.2em;
+  left: -5em;
+  width: 4.5em;
+  background-color: #f43;
+  height: 0.8em;
+  opacity: 0.5;
+}
+*/
+
+
+.row {
+  display: flex;
+}
+
+
+.col {
+  flex: 1 1 0;
+}
+
+.col+.col {
+  margin-left: 2em;
+}
+
+.title {
+  margin: 0 auto;
+}
+
+.title--logo {
+  width: 600px;
+}
+
+.title--author {
+  border-top: 2px solid currentColor;
+  font-weight: bold;
+  width: 380px;
+  text-align: center;
+  margin: 15px auto 0;
+  padding-top: 10px;
+}
+
+
+section.topic h1 {
+  font-size: 3em;
+  font-family: Orbitron, sans-serif;
+  text-transform: uppercase;
+}
+
+section.align-top {
+  justify-content: flex-start
+}
+
+/*
+.learning-box {
+  display: block;
+  margin-bottom: 1em;
+  font-weight: bold;
+  
+  border: 1px solid #f83;
+  border-radius: 3px;
+  padding: 0.5em;
+  padding-left: 2em;
+  background-color: #fff6ee;
+  position: relative;
+}
+
+.learning-box::before {
+  content: '💡';
+  position: absolute;
+  left: 0.5em;
+  top: 0.5em;
+
+}
+*/
+
+th {
+  text-align: left;
+}
+
+img.picture {
+  border: 1px solid #555;
+  border-radius: 3px;
+  box-shadow: 0 4px 9px rgba(40, 40, 40, 0.2);
+}

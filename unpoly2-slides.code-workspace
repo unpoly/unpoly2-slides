@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"markdown.marp.themes": ["./marp-theme.css"],
+		"markdown.marp.enableHtml": true,
+		"markdown.marp.breaks": "off",
+	}
+	
+}
