@@ -13,6 +13,7 @@ section {
   font-family: Roboto, sans-serif;
   font-size: 25px;
   line-height: 1.35;
+  --highlight: #ff4433
 }
 
 section:not(.no-watermark):not(.title) {
@@ -26,13 +27,16 @@ section:not(.no-watermark):not(.title) {
   opacity: 0.5;
 }
 
+/*
+code {
+  background-color: transparent;
+  padding: 0 0.2em;
+  font-size: 1.02em;
+}
+*/
+
 h1 {
-  xfont-size: 2em;
-  color: #3366bb;
-  color: #ff3366;
-  color: #f43;
-  xfont-family: Orbitron, sans-serif;
-  xtext-transform: uppercase;
+  color: var(--highlight);
   position: relative;
 }
 
@@ -88,7 +92,19 @@ section.topic h1 {
 }
 
 section.align-top {
-  justify-content: flex-start
+  justify-content: flex-start;
+}
+
+section.no-padding {
+  padding: 0;
+}
+
+.positive {
+  color: #37c04e;
+}
+
+.negative {
+  color: #ff5050;
 }
 
 /*
@@ -122,4 +138,9 @@ img.picture {
   border: 1px solid #555;
   border-radius: 3px;
   box-shadow: 0 4px 9px rgba(40, 40, 40, 0.2);
+}
+
+a[href] {
+  text-decoration: underline;
+  color: var(--highlight);
 }
