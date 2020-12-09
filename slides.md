@@ -414,6 +414,8 @@ up.layer.config.overlay.targets.push('.layout--content') // for all overlay mode
 
 ---
 
+<!-- _class: pro -->
+
 
 🥋 Setting a default transition
 ===============================
@@ -649,12 +651,13 @@ up.fragment.get(element, '.child') // will find .child in element's descendants
 | Layer name           | Description                                                  |
 | ---------------- | ------------------------------------------------------------ |
 | `current`        | The current layer                                            |
-| `any`            | Any layer, preferring the current layer                     |
+| `any`            | Any layer, preferring the current                     |
 | `parent`         | The layer that opened the current layer                      |
 | `closest`        | The current layer or any ancestor, preferring closer layers  |
 | `root`           | The root layer                                               |
 | `overlay`        | Any overlay                                                  |
 | `origin`         | The layer of the element that triggered the current action   |
+| `<Number>`         | The layer with this index                                    |
 
 </div>
 <div class="col">
@@ -664,7 +667,7 @@ up.fragment.get(element, '.child') // will find .child in element's descendants
 | `ancestor`       | Any ancestor layer of the current layer                      |
 | `child`          | The child layer of the current layer                         |
 | `descendant`     | Any descendant of the current layer                          |
-| `Element object` | The given element's layer                                    |
+| `<Element>`        | The given element's layer                                    |
 | `current root`   | Space-separated alternatives                                 |
 | `front`          | The frontmost layer (which may not be the current layer)   |
 
@@ -1049,8 +1052,8 @@ the lifetime of a layer:
 
 ---
 
-Initializing the context object
--------------------------------
+🥋 Initializing the context object
+----------------------------------
 
 The default context is an empty object (`{}`).
 
@@ -1070,8 +1073,8 @@ Or from HTML:
 
 ---
 
-Working with the context object
--------------------------------
+🥋 Working with the context object
+----------------------------------
 
 You may read and change the context from your client-side JavaScript:
 
@@ -1096,8 +1099,8 @@ end
 
 ---
 
-Use case: Re-using interactions in an overlay, but with a variation
--------------------------------------------------------------------
+🥋 Use case: Re-using interactions in an overlay, but with a variation
+----------------------------------------------------------------------
 
 Context is useful when you want to re-use an existing interaction in an overlay, but make a slight variation.
 
@@ -1397,8 +1400,8 @@ mode with their own `<up-drawer>` element.
 
 ---
 
-New layer mode: Cover
-=====================
+🥋 New layer mode: Cover
+========================
 
 Unpoly 2 ships with a new layer mode called `cover`. It overlays the *entire* page, including application layout. It brings its own scrollbar.
 
@@ -1410,11 +1413,10 @@ You often see cover overlays in mobile apps, e.g. on settings screens.
 
 ---
 
-Overlays without history
-========================
+🥋 Overlays without history
+===========================
 
 **💡 Modals without history required too much code in Unpoly 1.**
-
 
 In Unpoly 1 you could use `{ history: false }` to open an overlay without updating the browser history. However, every user navigation within that overlay *would* affect history, unless you had `[up-history=false]` on *every* link. This is impractical, since a link should not need to know whether it is used within an overlay.
 
@@ -1609,86 +1611,6 @@ Calmer log
 
 ---
 
-
-🥋 Targeting self-contained components
-======================================
-
-🎥 *Demo: DeskBot cards*
-
-TODO: Implement self-contained components in the layers demo app, e.g. rating widget
-
-
-**💡 We sometimes have multiple self-contained components on the same page.**
-
-In Unpoly 2 the position of a clicked link may be considered when deciding which element to replace.
-
----
-
-Example
--------
-
-Let's say we have two links that replace `.card`:
-
-```html
-<div class="card" id="card1">
-  Card #1 preview
-  <a href="/cards/1" up-target=".card">Show full card #1</a>
-</div>
-
-<div class="card" id="card2">
-  Card #2 preview
-  <a href="/cards/2" up-target=".card">Show full card #2</a>
-</div>
-```
-
-When clicking "Sow full card #2", Unpoly 1 would have replaced `.card`, matching the first card.
-
-This makes it hard to use interactive components more than once in the same page.
-
----
-
-
-Introducing `:closest`
-----------------------
-
-In Unpoly 2, links may refer to the closest ancestor with the experimental `:closest` pseudo class:
-
-```html
-<div class="card" id="card1">
-  Card #1 preview
-  <a href="/cards/1" up-target=".card:closest">Show full card #1</a>
-</div>
-
-<div class="card" id="card2">
-  Card #2 preview
-  <a href="/cards/2" up-target=".card:closest">Show full card #2</a>
-</div>
-```
-
-When clicking *"Show full card #2"*, Unpoly 2 will replace `#card2` matching the second card.
-
-While the card container still requires a unique selector (e.g. `[id=card1]`), none of the content elements do need to know about it.
-
----
-
-This also works with descendant selectors:
-
-```html
-<div class="card" id="card1">
-  <a href="/cards/1/links" up-target=".card:closest .card-links">Show card #2 links</a>
-  <div class="card-links"></div>
-</div>
-
-<div class="card" id="card2">
-  <a href="/cards/2/links" up-target=".card:closest .card-links">Show card #2 links</a>
-  <div class="card-links"></div>
-</div>
-```
-
-When clicking *"Show card #2 links"*, Unpoly 2 will replace `#card2 .card-links`.
-
----
-
 🥋 Dealing with compiler errors
 ============================
 
@@ -1717,8 +1639,8 @@ a link is `[up-instant]`.
 
 ---
 
-Example
--------
+🥋 Example
+----------
 
 Assume we have two links, one of which is `[up-instant]`:
 
@@ -1745,8 +1667,8 @@ document.addEventListener('up:click', function(event) {
 
 ---
 
-Cancelation is forwarded
-------------------------
+🥋 Cancelation is forwarded
+---------------------------
 
 If the user cancels an `up:click` event, the underlying `click` or `mousedown` will also be canceled.
 The following cancelation methods will be forwarded:
@@ -1757,8 +1679,8 @@ The following cancelation methods will be forwarded:
 
 ---
 
-Accessibility considerations
----------------------------
+🥋 Accessibility considerations
+-------------------------------
 
 If the user activates an element using their keyboard, the `up:click` event will be emitted
 on `click`, even if the element has an `[up-instant]` attribute.
@@ -2006,8 +1928,8 @@ The events are emitted before fragments are updated with the response HTML.
 ---
 
 
-Closing layers from the server
-==============================
+🥋 Closing layers from the server
+=================================
 
 The server can now close layers. The following is **Ruby code** on the backend:
 
@@ -2176,7 +2098,27 @@ up.cache.keep
 
 ---
 
-<!-- _class: no-watermark -->
+## Example for careful cache management
+
+```ruby
+def NotesController < ApplicationController
+
+  def create
+    @note = Note.create!(params[:note].permit(...))
+    if @note.save
+      up.cache.clear('/notes/*') # Only clear affected entries
+      redirect_to(@note)
+    else
+      up.cache.keep # Keep the cache because we haven't saved
+      render 'new'
+    end
+  end
+  ...
+end
+```
+
+
+<!--
 
 
 **Example:** Our index actions often have a search box to filter entries.
@@ -2203,6 +2145,7 @@ def NotesController < ApplcationController
   ...
 end
 ```
+-->
 
 ---
 
@@ -2252,7 +2195,7 @@ userSelect.value = user.id // overlay may still be fading out
 
 ---
 
-## When you need to wait
+## 🥋 When you need to wait
 
 Unpoly 2 provides an `{ onFinished }` callback for cases when your code *does* need to wait for animations:
 
@@ -2315,34 +2258,6 @@ up.network.config.metaKeys = function(request) {
   }
 }
 ```
-
----
-
-# 🥋 Clearing the cache less
-
-By default, Unpoly clears the entire cache with every unsafe (non-`GET` request).
-This is a safe default, but discards too many cache entries.
-
-In Unpoly 2 the server may also clear a smaller scope, or keep the cache:
-
-```ruby
-def NotesController < ApplicationController
-
-  def create
-    @note = Note.create!(params[:note].permit(...))
-    if @note.save
-      up.cache.clear('/notes/*') # Only clear affected entries
-      redirect_to(@note)
-    else
-      up.cache.keep # Keep the cache because we haven't saved
-      render 'new'
-    end
-  end
-  ...
-end
-```
-
-
 
 ---
 
@@ -2641,6 +2556,11 @@ Event listeners may call `event.preventDefault()` on an `up:fragment:loaded` eve
 
 ---
 
+## 🥋 Example
+
+The following will make a full page load if any fragment update responds
+with a maintenance page:
+
 ```js
 up.on('up:fragment:loaded', (event) => {
   let isMaintenancePage = event.response.getHeader('X-Maintenance')
@@ -2680,8 +2600,8 @@ Is this accessible for visually impaired users?\
 
 ----
 
-Issues
-------
+🥋 Issues with this code
+------------------------
 
 - The *Show details* and *Hide details* buttons cannot be focused
 - The *Show details* and *Hide details* buttons cannot be activated with the keyboard
@@ -2708,8 +2628,8 @@ This would focus the updated fragment:
 
 ----
 
-Focus options
--------------
+🥋 Focus options
+----------------
 
 | Focus option | Meaning |
 |-------------|---------|
