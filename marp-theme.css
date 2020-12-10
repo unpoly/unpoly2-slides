@@ -89,6 +89,11 @@ h1:before {
   padding-top: 10px;
 }
 
+.title--author a[href] {
+  color: var(--textColor);
+  text-decoration: none;
+}
+
 
 section.topic h1 {
   font-size: 3em;

@@ -9,7 +9,7 @@ theme: unpoly2-slides
 <div class="title">
   <img src="./images/unpoly2.svg" alt="Unpoly 2" class="title--logo">
   <div class="title--author">
-    Henning Koch&nbsp; @triskweline
+    Henning Koch&nbsp; <a href="https://twitter.com/triskweline">@triskweline</a>
   </div>  
 </div>
 
@@ -41,7 +41,9 @@ There will be two major Unpoly releases in **December 2020 / January 2021**:
 Unpoly 2?
 =========
 
-Unpoly 2 is a long-term project resulting from many discussions with my colleagues at makandra,\
+Unpoly 2 is the end of a long-term project.
+
+It resulted from many discussions with my colleagues at makandra, 
 and the limits they ran into when using Unpoly for non-trivial interactions.
 
 I also looked through a lot of code on our Gitlab to see how Unpoly was used in the wild.
@@ -365,7 +367,7 @@ Unpoly 2 lets you mark elements as default targets using the `[up-main]` attribu
 
 ---
 
-## Look ma, no target!
+## Links work without target
 
 Once a main target is configured, you no longer need `[up-target]` in a link.\
 Use `[up-follow]` and the `[up-main]` element will be replaced:
@@ -485,12 +487,11 @@ up.fragment.config.badTargetClasses.push(
 This is all of `unpoly-bootstrap4.scss`:
 
 ```css
-/* If a Boostrap container is shown in an overlay,
-   don't add to the existing padding of the overlay box. */
 up-modal, up-drawer, up-popup {
   .container, .container-fluid {
-    padding-left: 0;
-    padding-right: 0;
+    padding-left: 0;  /* The overlay box already has padding */
+    padding-right: 0; /* The overlay box already has padding */
+    max-width: none;  /* The overlay box already has max-width */
   }
 }
 ```
@@ -592,13 +593,6 @@ Example from a real application:
 
 ---
 
-As we stack layers, multiple copies of your app may run concurrently.
-
-
-This requires some changes.
-
----
-
 Layers are fully isolated
 =========================
 
@@ -615,7 +609,7 @@ If you want to do *anything* in another layer, use an `[up-layer]` attribute:
 ```html
 <a href="/path" up-target=".foo" up-layer="parent"> <!-- will only match in parent layer -->
 <a href="/path" up-target=".foo" up-layer="root">   <!-- will only match in root layer -->
-<a href="/path" up-target=".foo" up-layer="new">    <!-- opens a new modal overlay -->
+<a href="/path" up-target=".foo" up-layer="modal">  <!-- opens a new modal overlay -->
 ```
 
 You can always look at `[up-layer]` to know what layer is going to be updated.\
@@ -707,6 +701,8 @@ Events resulting from user navigation (like `up:link:follow`, `up:request:load`)
 ---
 
 
+## Listening to your layer
+
 Unpoly 2 provides convenience functions `up.layer.on()`  and `up.layer.emit()`\
 to listen / emit on the current layer:
 
@@ -714,6 +710,11 @@ to listen / emit on the current layer:
 up.layer.on('up:request:load', callback) // only listen to events from the current layer
 up.layer.emit('my:event') // emit my:event on the current layer's element
 ```
+
+The current layer is the layer in which you are compiling or navigating.
+
+
+## Listening to everything
 
 Layer events will still bubble up to the `document`,\
 so you can still register
@@ -760,6 +761,8 @@ up.fail_layer.root?     # true
 Why we need sub-interactions
 ============================
 
+🎥 *Show scenario in the demo app*
+
 This story is the base use case for a sub-interaction:
 
 - User starts filling out the form for a new project
@@ -768,8 +771,6 @@ This story is the base use case for a sub-interaction:
   The unfinished project form remains open in the background.
 - When the company was created in the overlay, the overlay should close.\
   The project form should now have the newly created company selected.
-
-🎥 *Show scenario in the demo*
 
 ----
 
@@ -878,7 +879,7 @@ Another common callback reloads `<select>` options and selects the new foreign k
 
 ---
 
-## Why I think this is useful
+## Why this is useful
 
 - You already have a CRUD interaction for companies
 - You can now embed the existing company form into your project form
@@ -974,7 +975,9 @@ The link's layer will be closed when the link is clicked:
 
 The JSON value of the `[up-accept]` attribute becomes the overlay's acceptance value.
 
-The link will only be followed if the link is on the root layer (where there is no overlay to accept).
+The link's `[href]` is just a fallback here. It will only be followed if the link is on the root layer (where there is no overlay to accept). You can also omit the `[href]` attribute.
+
+<br>
 
 **I'm not a huge fan of this** because it couples the overlay interaction to its parent layer.\
 But some of you asked for it, and I guess sometimes the overlay cannot be decoupled
@@ -1087,7 +1090,7 @@ the lifetime of a layer:
 | Local storage      | Domain | Permanentish   | String     | Yes               | &ndash;           |
 | Cookies            | Domain | Configurable   | String     | Configurable      | Yes               |
 | Session storage    | Tab    | Session        | String     | Yes               | &ndash;           |
-| Layer context 🆕   | Layer  | Session        | JSON       | Yes               | Yes               |
+| Layer context 🆕   | Layer  | Session        | Object      | Yes               | Yes               |
 
 
 ---
@@ -1221,7 +1224,8 @@ dismissCurrentIn(10) //
 New overlay HTML structure
 ===========================
 
-Unpoly 2 uses different HTML markup for its overlays. If you have customized your modals and popup with CSS, this is a breaking change for you.
+Unpoly 2 uses a more compact HTML markup for its overlays.\
+If you have customized your modals and popup with CSS, this is a breaking change for you.
 
 Luckily the new HTML structure is very similiar:
 
@@ -1421,7 +1425,7 @@ Customizing overlay HTML
 
 The HTML markup for a given overlay mode is now static. There is no `up.modal.config.template` anymore.
 
-Many former use cases for `up.modal.config.template` are covered by assigning a class, size.
+Many former use cases for `up.modal.config.template` are covered by assigning a class or size.
 
 If you absolutely, positively need to customize the overlay HTML, you may use the `up:layer:opened` event to modify the layer as it becomes visible. The event is emitted
 before the opening animation starts.
@@ -1489,7 +1493,7 @@ Switching screens vs. updating boxes
 
 **💡 Not all fragment updates are user navigation.**
 
-When Unpoly 1 updates fragment, it applies many opinionated defaults:
+When Unpoly 1 updates a fragment, it applies many opinionated defaults:
 
 - Update the browser location
 - Scroll to reveal the new fragment
@@ -1517,6 +1521,8 @@ up.replace('.message-count', '/inbox', {
 Unpoly 2 defaults are opt-in, not opt-out
 =========================================
 
+Unpoly 2 replaces `up.replace()`, `up.extract()` with a unified function `up.render()`.
+
 When updating a fragment in Unpoly 2 with `up.render()`, you will get **very few defaults**:
 
 ```js
@@ -1540,6 +1546,12 @@ You can opt into defaults for user navigation with `{ navigate: true }`:
 ```js
 // Will update history, will scroll, etc.
 up.render('.content', { url: '/users/5', navigate: true })
+```
+Instead of `up.render({ navigate: true })` you may also use `up.navigate()`:
+
+```js
+// Will update history, will scroll, etc.
+up.navigate('.content', { url: '/inbox' })
 ```
 
 
@@ -1569,18 +1581,11 @@ You can configure your navigation defaults with `up.fragment.config.navigateOpti
 
 You can opt out with the `[up-navigate=false]` attribute.
 
----
-<!-- _class: pro -->
+### Deprecated render functions are still considered navigation
 
-Navigation shorthand
---------------------
+Deprecated functions like `up.replace()` and `up.extract()` navigate by default.\
+That's was the behavior in Unpoly 1, and we don't want to break your apps.
 
-Instead of `up.render({ navigate: true })` you may also use `up.navigate()`:
-
-```js
-// Will update history, will scroll, etc.
-up.navigate('.message-count', { url: '/inbox' })
-```
 
 
 
@@ -1850,7 +1855,20 @@ Assign the `[up-poll]` attribute to any element to reload it every 30 seconds:
 </div>
 ```
 
-The fragment is reloaded from the URL that originally brought it into the DOM.
+---
+
+## Configuring the reload URL
+
+The polling fragment is reloaded from the URL that originally brought it into the DOM.
+
+You may set an optional `[up-source]` attribute to reload from a different source:
+
+```html
+<div class="unread-messages" up-poll up-source="/inbox/unread">
+  You have 2 unread messages
+</div>
+```
+
 
 ---
 
@@ -1872,7 +1890,6 @@ You can also configure the interval default globally with `up.fragment.config.po
 
 ---
 
-
 ### Polling pauses while the browser tab is invisible
 
 This prevents unnecessary server load when another tab is in the foreground,\
@@ -1889,8 +1906,8 @@ It resumes when the layer is unveiled.
 
 ---
 
-Making poll requests cheap
-==========================
+Cheap polling responses
+-----------------------
 
 **💡️ Naive polling implementation will often cause unchanged content to be re-rendered.**
 
@@ -1957,8 +1974,8 @@ You can use any new features by manually setting a response header as documented
 
 ## What we've seen so far:
 
-- The server can emit events on the frontend
-- The server can close overlays
+- The server can emit events on the frontend (`X-Up-Events` header)
+- The server can close overlays (`X-Up-Accept-Layer` and `X-Up-Dismiss-Layer`)
 
 
 ---
@@ -2066,7 +2083,7 @@ The cache in Unpoly 1 follows two rules:
 
 These were generally good defaults, but sometimes we would cache too much or clear too much.
 
-**In Unpoly 2 the server can send hints to better manage the frontend cache.**
+**In Unpoly 2 the server can send an `X-Up-Cache` header to better manage the frontend cache.**
 
 ---
 
@@ -2334,9 +2351,12 @@ up.render({ target: '.foo', content: 'New inner HTML' }
 ```
 
 ---
+<!-- _class: pro -->
 
 Event handlers may change render options
-==========================================
+========================================
+
+**💡 In Unpoly 1 had many events. But listeners were limited in what they could do.**
 
 When the user interacts with links or forms, Unpoly will emit these events:
 
@@ -2347,9 +2367,10 @@ When the user interacts with links or forms, Unpoly will emit these events:
 
 Event handlers may prevent these events to cancel the fragment update.
 
-**Unpoly 2 also lets event listeners manipulate render options for the coming fragment update.**
+**Unpoly 2 also lets event listeners read and change render options for the coming fragment update.**
 
 ---
+<!-- _class: pro -->
 
 ## Basic example
 
@@ -2364,6 +2385,7 @@ up.on('up:form:submit', function(event) {
 If you have compilers that only set default attributes, consider using a single event listener that manipulates `event.renderOptions` instead. It's much leaner than a compiler, which needs to be called for every new fragment.
 
 ---
+<!-- _class: pro -->
 
 Advanced example
 ----------------
@@ -2787,6 +2809,19 @@ Extensive rework of almost all APIs.
 </div>
 </div>
 
+
+---
+
+
+Roadmap
+=======
+
+There will be two major Unpoly releases in **December 2020 / January 2021**:
+
+- The current version 0.62 will be published as **Unpoly 1.0**.
+- **Unpoly 2.0** will be released as a major upgrade.
+
+
 ---
 
 <!-- _class: no-watermark -->
@@ -2794,6 +2829,6 @@ Extensive rework of almost all APIs.
 <div class="title">
   <img src="./images/unpoly2.svg" alt="Unpoly 2" class="title--logo">
   <div class="title--author">
-    Henning Koch&nbsp; @triskweline
+    Henning Koch&nbsp; <a href="https://twitter.com/triskweline">@triskweline</a>
   </div>  
 </div>
