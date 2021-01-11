@@ -300,8 +300,8 @@ You may still opt out individual links or forms by setting `[up-follow=false]`:
 To except *all* external links and forms, skip URL with a schema separator (`://`):
 
 ```js
-up.link.config.followSelectors.push('a[href]:not(href*="://")')
-up.form.config.submitSelectors.push('form:not(action*="://")')
+up.link.config.followSelectors.push('a[href]:not([href*="://"])')
+up.form.config.submitSelectors.push('form:not([action*="://"])')
 ```
 
 ---
@@ -1594,6 +1594,69 @@ That's was the behavior in Unpoly 1, and we don't want to break your apps.
 <!-- _class: 'topic' -->
 
 # Quality of life improvements
+
+
+---
+
+<!-- _class: pro -->
+
+Self-contained components
+=========================
+
+🎥 *Demo: TODOs in sample app*
+
+
+**💡 We sometimes have multiple self-contained components on the same page.**
+
+In Unpoly 2 the position of a clicked link isconsidered when deciding which element to replace.
+
+---
+
+<!-- _class: pro -->
+
+Example
+--------
+
+Let's say we have two links that replace `.card`:
+
+```html
+<div class="card">
+  Card #1 preview
+  <a href="/cards/1" up-target=".card">Show full card #1</a>
+</div>
+
+<div class="card">
+  Card #2 preview
+  <a href="/cards/2" up-target=".card">Show full card #2</a>
+</div>
+```
+
+<div class="negative"><b>When clicking "Show full card #2", Unpoly 1 replaces the first card.</b></div>
+
+<div class="positive"><b>When clicking "Show full card #2", Unpoly 2 replaces the second card.</b></div>
+
+
+
+---
+
+This also works with descendant selectors:
+
+```html
+<div class="card">
+  <a href="/cards/1/links" up-target=".card .card-links">Show card #2 links</a>
+  <div class="card-links"></div>
+</div>
+
+<div class="card">
+  <a href="/cards/2/links" up-target=".card .card-links">Show card #2 links</a>
+  <div class="card-links"></div>
+</div>
+```
+
+<div class="negative"><b>When clicking *"Show card #2 links"*, Unpoly 2 replaces the first card's links</b></div>
+<div class="positive"><b>When clicking *"Show card #2 links"*, Unpoly 2 replaces the second card's links.</b></div>
+
+
 
 ---
 
