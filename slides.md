@@ -609,7 +609,7 @@ If you want to do *anything* in another layer, use an `[up-layer]` attribute:
 ```html
 <a href="/path" up-target=".foo" up-layer="parent"> <!-- will only match in parent layer -->
 <a href="/path" up-target=".foo" up-layer="root">   <!-- will only match in root layer -->
-<a href="/path" up-target=".foo" up-layer="modal">  <!-- opens a new modal overlay -->
+<a href="/path" up-target=".foo" up-layer="new">    <!-- opens a new modal overlay -->
 ```
 
 You can always look at `[up-layer]` to know what layer is going to be updated.\
