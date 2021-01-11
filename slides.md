@@ -1974,15 +1974,27 @@ Cheap polling responses
 
 **💡️ Naive polling implementation will often cause unchanged content to be re-rendered.**
 
-When reloading, Unpoly sends a timestamp for the current fragment (`X-Up-Reload-From` header).
-You can compare this timestamp with the time of your last data update. If no more recent data
-is available, you can render nothing:
+You may timestamp your fragments with an `[up-time]` attribute to indicate when the underlying data was last changed. For instance, when the last message in a list was received from December 24th, 1:51:46 PM UTC:
+
+```html
+<div class="messages" up-time="1608817906">
+  ...
+</div>
+```
+
+When reloading the `.messages` fragment, Unpoly will echo that timestamp in an `X-Up-Reload-From-Time` header.
+
+---
+
+## Only render when needed
+
+The server may compare this timestamp with the time of your last data update. If no more recent data is available, the server can render nothing:
 
 ```ruby
 class MessagesController < ApplicationController
 
   def index
-    if up.reload_from_before?(current_user.last_message_at)
+    if up.reload_from_time == current_user.last_message_at
       up.render_nothing
     else
       @messages = current_user.messages.order(time: :desc).to_a
