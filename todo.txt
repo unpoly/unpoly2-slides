@@ -1,3 +1,11 @@
-- Remove :closest
-  - Instead wer're now matching around origin
-- badTargetClasses
+
+
+- maybe remove
+  - Setting a default transition
+  - Remembering the current layer
+  - Optimizing cacheability
+  - Content Security Policy
+  - Return value contains information about the request
+
+- maybe don't
+  - badTargetClasses

@@ -101,7 +101,8 @@ section.topic h1 {
   text-transform: uppercase;
 }
 
-section.pro:before {
+section.pro:before,
+section.new:before {
   content: 'PRO';
   background-color: white;
   position: absolute;
@@ -115,6 +116,11 @@ section.pro:before {
   font-weight: bold;
   transform: rotate(-45deg);
   /* box-shadow: 0 5px 40px rgba(40, 40, 40, 0.2); */
+}
+
+section.new:before {
+  content: 'NEW';
+  background-color: var(--highlightColor);
 }
 
 
@@ -170,4 +176,8 @@ img.picture {
 a[href] {
   text-decoration: underline;
   color: var(--highlightColor);
+}
+
+.hljs-comment {
+  color: #868886 !important;
 }

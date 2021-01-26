@@ -31,7 +31,7 @@ who want to learn about the major changes in Unpoly 2.**
 Roadmap
 =======
 
-There will be two major Unpoly releases in **December 2020 / January 2021**:
+There will be two major Unpoly releases in **early 2021**:
 
 - The current version 0.62 will be published as **Unpoly 1.0**.
 - **Unpoly 2.0** will be released as a major upgrade.
@@ -185,6 +185,8 @@ Unpoly 2 keeps aliases for deprecated APIs going back to 2016.
 
 ---
 
+<!-- _class: new -->
+
 
 <p>Calls to old APIs will be forwarded to the new version and log a deprecation notice with a trace.
 </p>
@@ -193,6 +195,10 @@ Unpoly 2 keeps aliases for deprecated APIs going back to 2016.
 
 <p>This way you upgrade Unpoly, revive your application with few changes,<br>
 then replace deprecated API calls under green tests.</p>
+
+<p>
+If you prefer errors to warnings, you can set <code>up.migrate.config.logLevel = 'error'</code>.
+</p>
 
 ---
 
@@ -228,8 +234,18 @@ then replace deprecated API calls under green tests.</p>
 `<a up-dismiss>`.
 </div>
 
+
 ---
 
+<!-- _class: new -->
+
+## Removing aliases from your build
+
+All aliases are shipped as a separate file `unpoly-migrate.js`.
+
+Once you have fixed deprecated usages you can remove this from your build.
+
+---
 
 <!-- _class: topic -->
 
@@ -413,30 +429,10 @@ Unpoly 2 lets you configure different main targets for different layer modes:
 You may also configure overlay targets unobtrusively:
 
 ```js
-up.layer.config.popup.targets.push('.menu')              // for popup overlays
-up.layer.config.drawer.targets.push('.menu')             // for drawer overlays
-up.layer.config.overlay.targets.push('.layout--content') // for all overlay modes
+up.layer.config.popup.mainTargets.push('.menu')              // for popup overlays
+up.layer.config.drawer.mainTargets.push('.menu')             // for drawer overlays
+up.layer.config.overlay.mainTargets.push('.layout--content') // for all overlay modes
 ```
-
----
-
-<!-- _class: pro -->
-
-
-Setting a default transition
-============================
-
-I'm not a big fan of animating *every* fragment update.
-
-**But since some of you do this**, here is how to set a default transition:
-
-```js
-up.fragment.config.navigateOptions.transition = 'cross-fade'
-```
-
-We're going to learn more about `up.fragment.config.navigateOptions` in a minute.
-
-
 
 
 ---
@@ -455,7 +451,7 @@ Unpoly 2 now ships with a **unopinionated Bootstrap integration**.
 ---
 <!-- _class: pro -->
 
-This is all of `unpoly-boostrap4.js`:
+This is all of `unpoly-bootstrap4.js`:
 
 ```js
 // Bootstrap expects the class .active instead of .up-active
@@ -618,7 +614,7 @@ If there is no `[up-layer]` attribute, you are going to update the current layer
 
 ----
 
-# CSS selectors are matched in the current layer
+## CSS selectors are matched in the current layer
 
 JavaScript functions that take a **CSS selector** will only look in the current layer:
 
@@ -732,7 +728,8 @@ up.on('up:request:load', callback) // listen to events from all layers
 Inspecting the layer from the server
 ====================================
 
-The server now knows if the request is targeting an overlay:
+The server now knows if the request is targeting an overlay.\
+The following is Ruby code (`unpoly-rails` gem):
 
 ```ruby
 up.layer.mode      # 'drawer'
@@ -1152,7 +1149,7 @@ Context is useful when you want to re-use an existing interaction in an overlay,
 
 - Assume you want to re-use your existing contacts index for a contact picker widget.
 - The contact picker opens the context index in an overlay where the user can choose a contact.
-- In this case the contact index should show an additional message "Pick a context for project Foo", replacing `Foo` with the actual name of the project.
+- In this case the contact index should show an additional message "Pick a contact for project Foo", replacing `Foo` with the actual name of the project.
 
 ---
 <!-- _class: pro -->
@@ -1192,31 +1189,6 @@ The server can inspect the context in `/contacts/index.erb`:
 <% @contacts.each do |contact| %>
   <li>...</li>
 <% end %>  
-```
-
----
-<!-- _class: pro -->
-
-Remembering the current layer
-=============================
-
-Like most functions, `up.layer.dismiss()` will affect the "current" layer.
-
-`up.layer.current` is set to the right layer in compilers and most events, even if that layer is not the "front" layer. E.g. if you're compiling a fragment for a background layer, `up.layer.current` will be
-the background layer during compilation.
-
-
-If you have async code, the current layer may change when your callback is called.\
-You may also retrieve the current layer for later reference:
-
-```js
-function dismissCurrentIn(seconds) {
-  let savedLayer = up.layer.current // returns an up.Layer object
-  let dismiss = () => savedLayer.dismiss()
-  setTimeout(dismiss, seconds * 1000)
-}
-
-dismissCurrentIn(10) // 
 ```
 
 ---
@@ -1423,11 +1395,12 @@ You may also enable or disable *all* closing methods together with the `{ dismis
 Customizing overlay HTML
 ========================
 
-The HTML markup for a given overlay mode is now static. There is no `up.modal.config.template` anymore.
+The HTML markup for a given overlay mode is now static.\
+There is no `up.modal.config.template` anymore.
 
 Many former use cases for `up.modal.config.template` are covered by assigning a class or size.
 
-If you absolutely, positively need to customize the overlay HTML, you may use the `up:layer:opened` event to modify the layer as it becomes visible. The event is emitted
+If you do need to customize the overlay HTML, you may use the `up:layer:opened` event to modify the layer as it becomes visible. The event is emitted
 before the opening animation starts.
 
 ```js
@@ -1444,11 +1417,16 @@ if (isChristmas()) {
 Drawers and modal "flavors"
 ===========================
 
-Drawer overlays used to be a modal "flavor" in Unpoly 1. They shared their HTML markup with
+Drawer overlays used to be a modal "flavor" in Unpoly 1.\
+They shared their HTML markup with
 standard modal overlays.
 
-There is no `up.modal.flavors` in Unpoly 2 anymore. Drawers are now a first-class overlay
+There is no `up.modal.flavors` in Unpoly 2 anymore.
+
+Drawers are now a first-class overlay
 mode with their own `<up-drawer>` element.
+
+There is currently no API to define a custom overlay mode.
 
 ---
 <!-- _class: pro -->
@@ -1456,10 +1434,13 @@ mode with their own `<up-drawer>` element.
 New layer mode: Cover
 =====================
 
-Unpoly 2 ships with a new layer mode called `cover`. It overlays the *entire* page, including application layout. It brings its own scrollbar.
+Unpoly 2 ships with a new layer mode called `cover`.
+
+It overlays the *entire* page, including application layout.\
+It brings its own scrollbar.
 
 ```html
-<a href="/path" up-layer="cover">
+<a href="/path" up-layer="new" up-mode="cover">
 ```
 
 You often see cover overlays in mobile apps, e.g. on settings screens.
@@ -1589,6 +1570,242 @@ That's was the behavior in Unpoly 1, and we don't want to break your apps.
 
 
 
+
+
+
+
+
+---
+<!-- _class: topic new --->
+
+<h1>Accessibility <span class="muted">(A11Y)</span></h1>
+
+---
+
+<!-- _class: new -->
+
+
+# Types of disabilities
+
+We will mostly talk about two types of disabilities:
+
+- Visual (low vision or blindness)
+- Lack of fine motor control (hard to point mouse)
+
+As a user with one or both of these impairements I might use a **screen reader** with a keyboard.
+
+
+
+---
+
+<!-- _class: new -->
+
+
+# Screen readers
+
+Screen readers use speech synthesis that read a webpage aloud.
+
+They come with many additional keyboard shortcuts to jump between page elements and describe what is visible on the screen.
+
+A good reader for Chrome is the [Screen Reader extension](https://chrome.google.com/webstore/detail/screen-reader/kgejglhpjiefppelpmljglcjbhoiplfn).
+
+
+---
+<!-- _class: new -->
+
+## Some keyboard shortcuts
+
+| Key | Effect |
+|-----|--------|
+| `Tab`             | Move to next focusable element |
+| `Shift+Tab`       | Move to previous focusable element |
+| `ALT+Shift+Down`  | Move down    |
+| `ALT+Shift+Up`    | Move up      |
+| `ALT+Shift+R`     | Start reading text from focused element |
+| `CTRL`            | Stop reading |
+| `Enter`           | Activate link |
+| `ALT+Shift+O > O` | Show all keyboard shortcuts |
+
+
+
+-----
+<!-- _class: new -->
+
+
+## Breaking screen readers with JavaScript
+
+When you build a site with semantic HTML and no JavaScript, it will be reasonably accessible.\
+It's not great, but it's mostly OK.
+
+As soon as you change content with JavaScript you will probably break screen readers without further testing:
+
+- Interactive elements are not focusable
+- Interactive elements are not announced as such
+- Interactive elements cannot be activated with the keyboard
+- Focus is not moved to new content when navigating
+
+<br>
+
+🎥 *Demo with VoiceVox on <https://railslts.com>*
+
+
+
+
+----
+<!-- _class: new -->
+
+# Focus is "scrolling for your ears"
+
+When relying on a screen reader, the focused element sets the reading position.
+
+**When your app scrolls or renders to present a new element,\
+consider whether also you want to move the reading position to that element.**
+
+
+---
+
+<!-- _class: new -->
+
+
+# Automatic focus management in Unpoly 2
+
+Unpoly 2 tries to guide the user focus in your app.\
+The reading position is always moved to the next logical element.
+
+<br>
+
+*🎥 Show in the demo app:*
+
+- *Activating a top navigation link focuses the target content*
+- *Overlays are focused after opening*
+- *When an overlay is closed, focus returns to the opening link*
+- *Screen reader announcements as we enter and exit overlays*
+
+
+----
+<!-- _class: new -->
+
+## How focus is moved by default
+
+When navigating, Unpoly will try to automatically guide the focus to the
+next natural reading position.
+
+Unpoly will try **in this order**:
+
+- Focus a `#hash` in the URL
+- Focus an `[autofocus]` element in the new fragment
+- Focus the new fragment if it matches a main target
+
+You may configure this behavior with `up.fragment.config.autoFocus`.
+
+---
+<!-- _class: new -->
+
+## Explicit focus control
+
+Unpoly 2 also provides an `[up-focus]` attribute (or `{ focus }` option).\
+Use it to **explicitely move** the user's focus as you update fragments.
+
+When you set the `{ scroll }` option you should also think about setting the `{ focus }` option.
+
+## Example
+
+This would focus the `.avatar` element in the new fragment:
+
+```html
+<a href="/users/5" up-focus=".avatar">Load profile</a>
+```
+
+----
+<!-- _class: new -->
+
+Focus options
+-------------
+
+| Focus option | Meaning |
+|-------------|---------|
+| `'keep'`      | Preserve focus if possible |
+| `'target'`    | Focus the updated fragment |
+| `'layer'`     | Focus the updated layer |
+| `'autofocus'` | Focus any `[autofocus]` elements in the new fragment |
+| `'hash'`      | Focus the URL's `#hash` target (if any) |
+| `'auto'`      | Shortcut for `['hash', 'autofocus', 'target']` (navigation default) |
+| `Element`     | Focus this element |
+| `.css-selector` | Focus an element matching this CSS selector |
+
+
+---
+<!-- _class: new -->
+
+## Preserving focus
+
+When updating a fragment with focus, `{ focus: 'keep' }` will try to preserve focus-related
+properties.
+
+When the focused fragment is rediscovered in the new content, the following properties are preserved:
+
+- Cursor position ("Caret")
+- Selection range
+- Scroll position (X/Y)
+
+When validating with `[up-validate]`, Unpoly will preserve focus when possible.
+
+
+
+---
+<!-- _class: new -->
+
+## Focus in overlays
+
+Unpoly 2 follows best practices for controlling focus in modal overlays:
+
+- When on overlay is opened, the overlay is focused.\
+  Screen readers start reading the overlay content.
+
+- When an overlay closed, focus is returned to the link that opened the modal.
+
+- While the modal is open, focus is trapped in a cycle within the overlay.\
+  The user cannot focus elements outside the overlay.
+
+
+---
+
+<!-- _class: new -->
+
+Accessible JavaScript buttons
+=============================
+
+When a `<div>` or `<span>` gets a click handler, the element cannot be focused or activated with the keyboard.
+
+Instead of implementing the missing functionality with more JavaScript, you may give your element the `[up-clickable]` attribute. This will:
+
+- Makes the element focusable
+- Allows the user to activate the element with the keyboard (`up:click` is emitted)
+- Gets the `[aria-role="link"]` (so screen reader announces "link" on focus)
+
+Use this for your JavaScript controls (e.g. a ▶️ *Play* button in a custom video player).\
+It works for all elements, not just Unpoly links.
+
+If you can't control the markup of your inaccessible JavaScript control, add its selector to `up.fragment.config.clickableSelectors`.
+
+---
+<!-- _class: pro -->
+
+Various A11Y improvements
+=========================
+
+- `[up-nav]` sets `[aria-current]` to the current link.
+- Links with an [`[up-instant]`](/a-up-instant) attribute can now be followed with the keyboard.
+- When a fragment is being updated with a transition, the old version is
+  given [`[aria-hidden=true]`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-hidden_attribute) while it's disappearing.
+- Overlays now get an [`[aria-modal=true]`](https://a11ysupport.io/tech/aria/aria-modal_attribute) attribute.
+
+Some of these features were backported to Unpoly 0.6.2.
+
+
+
+
+
 ---
 
 <!-- _class: 'topic' -->
@@ -1603,12 +1820,14 @@ That's was the behavior in Unpoly 1, and we don't want to break your apps.
 Self-contained components
 =========================
 
-🎥 *Demo: TODOs in sample app*
-
-
 **💡 We sometimes have multiple self-contained components on the same page.**
 
-In Unpoly 2 the position of a clicked link isconsidered when deciding which element to replace.
+In Unpoly 2 the position of a clicked link is considered when deciding which element to replace.
+
+<br>
+
+🎥 *Demo: Task wall in sample app*
+
 
 ---
 
@@ -1629,6 +1848,11 @@ Let's say we have two links that replace `.card`:
   Card #2 preview
   <a href="/cards/2" up-target=".card">Show full card #2</a>
 </div>
+
+<div class="card">
+  Card #3 preview
+  <a href="/cards/3" up-target=".card">Show full card #3</a>
+</div>
 ```
 
 <div class="negative"><b>When clicking "Show full card #2", Unpoly 1 replaces the first card.</b></div>
@@ -1638,6 +1862,9 @@ Let's say we have two links that replace `.card`:
 
 
 ---
+
+<!-- _class: pro -->
+
 
 This also works with descendant selectors:
 
@@ -1651,10 +1878,15 @@ This also works with descendant selectors:
   <a href="/cards/2/links" up-target=".card .card-links">Show card #2 links</a>
   <div class="card-links"></div>
 </div>
+
+<div class="card">
+  <a href="/cards/3/links" up-target=".card .card-links">Show card #3 links</a>
+  <div class="card-links"></div>
+</div>
 ```
 
-<div class="negative"><b>When clicking *"Show card #2 links"*, Unpoly 2 replaces the first card's links</b></div>
-<div class="positive"><b>When clicking *"Show card #2 links"*, Unpoly 2 replaces the second card's links.</b></div>
+<div class="negative"><b>When clicking "Show card #2 links", Unpoly 2 replaces the first card's links</b></div>
+<div class="positive"><b>When clicking "Show card #2 links", Unpoly 2 replaces the second card's links.</b></div>
 
 
 
@@ -1749,8 +1981,9 @@ up:click
 The `up:click` event is generally emitted when an element is clicked. However, for elements
 with an [`[up-instant]`](/a-up-instant) attribute this event is emitted on `mousedown` instead.
 
-This is useful to listen to links being activated, without needing to know whether
+This is useful to listen to links being activated, without needing to know if
 a link is `[up-instant]`.
+
 
 ---
 <!-- _class: pro -->
@@ -1794,33 +2027,35 @@ The following cancelation methods will be forwarded:
 - `event.stopImmediatePropagation()`
 - `event.preventDefault()`
 
----
-<!-- _class: pro -->
-
-Accessibility considerations
-----------------------------
-
-If the user activates an element using their keyboard, the `up:click` event will be emitted
-on `click`, even if the element has an `[up-instant]` attribute.
-
 
 ----
-<!-- _class: pro -->
+<!-- _class: new -->
 
 Unified scroll options
 ======================
 
-All scroll-related options (`{ reveal, resetScroll, restoreScroll }`) have been reduced to a single option `{ scroll }`. It accepts one of the following values:
+Unpoly 1 had multiple scroll-related options 
+(`{ reveal, resetScroll, restoreScroll }`).
 
-| Option value        | Effect                                          |
-|---------------------|-------------------------------------------------|
-| `'target'`          | Reveal the updated fragment (Unpoly 1 default)  |
-| `'top'`             | Scroll to the top                               |
-| `'restore'`         | Restore last known scroll position for URL      |
-| `'hash'`            | Scroll to a #hash in the updated URL            |
-| `Function(options)` | Pass your own scrolling logic                   |
-| `false`             | Don't scroll                                    |
-| `'auto'`            | Scroll to the top **if** updating a main target (see below) |
+Unpoly 2 has unified these options into single option `{ scroll }` (`[up-scroll]` in HTML).
+
+-----
+<!-- _class: new -->
+
+
+The `{ scroll }` option accepts one of the following values:
+
+| Option value         | Effect                                          |
+|----------------------|-------------------------------------------------|
+| `false`              | Don't scroll                                    |
+| `'target'`           | Reveal the updated fragment (Unpoly 1 default)  |
+| `'top'`              | Scroll to the top                               |
+| `'restore'`          | Restore last known scroll position for URL      |
+| `'hash'`             | Scroll to a #hash in the updated URL            |
+| `.css-selector`      | The CSS selector of the element to reveal       |
+| `Element`            | Reveal the given element                        |
+| `Function(fragment)` | Custom scrolling logic                          |
+| `'auto'`             | Scroll to the top **if** updating a main target (see below) |
 
 ---
 
@@ -1846,12 +2081,14 @@ E.g. when the user switches between tabs, they wouldn't expect scroll changes.
 
 ## Unpoly 2 no longer scrolls by default
 
-Only when **navigating** the new default is `{ scroll: 'auto' }`, which *sometimes* scrolls:
+When navigating the new default is `{ scroll: 'auto' }`, which *sometimes* scrolls:
 
 - If the URL has a `#hash`, scroll to the hash.
-- **If updating a main target, scroll to the top.**\
+- If updating a main target, scroll to the top.\
   The assumption here is that we navigated to a new screen.
 - Otherwise don't scroll. 
+
+You may configure this behavior with `up.fragment.config.autoScroll`.
 
 ---
 <!-- _class: pro -->
@@ -1863,10 +2100,28 @@ Tuning the scroll effect
 | -------------------- | --------------------------------------------- | ----------------------- |
 | `{ revealPadding }`  | Pixels between element and viewport edge      | `0`                     |
 | `{ revealTop }`      | Whether to move a revealed element to the top | `false`                 |
-| `{ revealMax }`      | How much of a high element to reveal          | `0.5 * innerHeight`     |
+| `{ revealMax }` 🆕   | How much of a high element to reveal          | `0.5 * innerHeight`     |
 | `{ revealSnap }`     | When to snap to the top edge                  | `200`                   |
 | `{ scrollBehavior }` | auto/smooth                                   | `'auto'` (no animation) |
 | `{ scrollSpeed }`    | Acceleration of smooth scrolling              | `1` (mimic Chrome)      |
+
+
+
+
+---
+<!-- _class: pro -->
+
+# History is updated less often
+
+When navigating the new default is `{ history: 'auto' }`, which *sometimes* updates history:
+
+- When swapping a fragment, history is only changed when the fragment is a main target.\
+  The assumption is that we navigated to a new screen.
+- When opening an overlay, the layer history is set to the mode default\
+  (e.g. `up.layer.config.modal.history`).\
+  The overlay will keep this setting for its lifetime.
+
+You may configure this behavior with `up.fragment.config.autoHistory`.
 
 ---
 <!-- _class: pro -->
@@ -1890,7 +2145,7 @@ Slow connection?
 We consider a connection to be slow if at least one of these conditions are true:
 
 - TCP Round Trip Time is >= 750 ms (`up.network.config.slowRTT`)
-- Downlink is <= 600 Kbps (`up.network.config.slownDownlink`)
+- Downlink is <= 600 Kbps (`up.network.config.slowDownlink`)
 - User has data saving enabled ("Lite mode" in Chrome)
 
 The values above may change during a session.\
@@ -2238,31 +2493,6 @@ end
 ```
 -->
 
----
-<!-- _class: pro -->
-
-up.proxy is now up.network
-==========================
-
-Your calls will be forwarded.
-
-
----
-<!-- _class: pro -->
-
-CSS selector extensions
-==========================
-
-| Target | What will be updated |
-|--------|-------------------------------------|
-| `.foo`                | An element matching `.foo`.      |
-| `.foo:has(.bar)`      | An element matching `.foo` with a descendant matching `.bar`. |
-| `:none`               | Nothing, but we still make a server request. |
-| `:layer`              | The first element in the current layer. |
-| `:main`               | Any element matching a main selector (default `main, [up-main]`).
-| `.foo:closest`        | The activated element's closest ancestor matching `.foo`. |
-| `.foo:closest .child `| An element matching `.child`  within the activated element's closest ancestor matching `.foo`. |
-
 
 ----
 <!-- _class: pro -->
@@ -2279,8 +2509,8 @@ Any animation will play out after the promise has settled.
 This generally makes code more responsive:
 
 ```js
-let user = await up.layer.ask({ url: '/users/new' })
-userSelect.value = user.id // overlay may still be fading out
+await up.layer.open({ url: '/users/new', openAnimation: 'fade-in' })
+console.log("Hello overlay!") // overlay may still be fading in
 ```
 
 ---
@@ -2486,43 +2716,15 @@ up.on('up:link:follow', 'a[authorize]', async function(event) {
 })
 ```
 
----
-<!-- _class: pro -->
-
-Content Security Policy
-=======================
-
-By choosing a strict CSP, you also decide against using event handlers in your HTML.
-
-Handlers like `[up-on-accepted]` cannot work with CSP:
-
-```html
-<a href="/contacts/new"
-  up-layer="new"
-  up-accept-location="/contacts/$id"
-  up-on-accepted="up.reload('.table')">
-  ...
-</a>  
-```
-
-You will need to move your JavaScript code into your JavaScript sources.
 
 ---
 <!-- _class: pro -->
 
-This is easier now that event handlers can change render options:
+up.proxy is now up.network
+==========================
 
-```html
-<a href="/contacts/new" class="add-contact" up-follow>...</a>
-```
+Your calls will be forwarded.
 
-```js
-up.on('up:link:follow', '.add-contact', function(event) {
-  event.renderOptions.layer = 'new'
-  event.renderOptions.acceptLocation = '/contacts/$id'
-  event.renderOptions.onAccepted = (event) => up.reload('.table')
-})
-```
 
 ---
 <!-- _class: pro -->
@@ -2579,21 +2781,6 @@ console.log(response.json)
 ---
 <!-- _class: pro -->
 
-Return value contains information about the request
---------------------------------------------------
-
-```js
-let request = up.request('/api/v3/foo')
-console.log(request.method) // logs "GET"
-
-// The request is also a promise for its response.
-let response = await request
-console.log(response.text)
-```
-
----
-<!-- _class: pro -->
-
 Requests are abortable
 ----------------------
 
@@ -2604,7 +2791,7 @@ let request = up.request('/api/v3/foo')
 request.abort()
 ```
 
-This emits a new event `up:layer:aborted`.
+This emits a new event `up:request:aborted`.
 
 We already learnt that user navigation now aborts existing requests.\
 You may opt in and out of this with the `{ solo }` flag.
@@ -2680,129 +2867,6 @@ up.on('up:fragment:loaded', (event) => {
   }
 })
 ```
-
----
-<!-- _class: topic pro --->
-
-<h1>Accessibility <span class="muted">(A11Y)</span></h1>
-
----
-<!-- _class: pro -->
-
-Using the internet with visual impairments
-==========================================
-
-🎥 *Demo with VoiceVox on <https://railslts.com>*
-
------
-<!-- _class: pro -->
-
-# Accessible JavaScript is hard
-
-Is this accessible for visually impaired users?\
-<https://codepen.io/triskweline/pen/abmZZJb>
-
-
-----
-<!-- _class: pro -->
-
-Issues with this code
----------------------
-
-- The *Show details* and *Hide details* buttons cannot be focused
-- The *Show details* and *Hide details* buttons cannot be activated with the keyboard
-- When the modal is opened, the modal should be focused.
-- When the modal is closed, the link that opened the modal should be focused.
-- While the modal is open, background elements should be removed from the accessibility tree.
-- While the modal is open, focus should be trapped in a cycle within the modal.
-
----
-<!-- _class: pro -->
-
-Guiding the user's focus
-========================
-
-Unpoly 2 provides an `[up-focus]` attribute (`{ focus }` option for JS).\
-Use it to guide the user's focus as you update fragments.
-
-## Example
-
-This would focus the updated fragment:
-
-```html
-<a href="/users/5" up-focus="target">Load profile</a>
-```
-
-----
-<!-- _class: pro -->
-
-Focus options
--------------
-
-| Focus option | Meaning |
-|-------------|---------|
-| `keep`      | Preserve focus if possible        |
-| `target`    | Focus the updated fragment |
-| `layer`     | Focus the updated layer |
-| `autofocus` | Focus any [autofocus] elements in the new fragment |
-| `auto`      | Navigation default *(see next slide)* |
-
-
-----
-<!-- _class: pro -->
-
-The default for user navigation is `{ focus: 'auto' }`:
-
-- **When updating a fragment**, try to preserve the focus.\
-  If nothing is focused, focus an `[autofocus]` element in the new fragment.
-
-- **When opening a layer**, focus an `[autofocus]` element in the new layer.\
-  If no `[autofocus]` element exists, focus the layer.
-
-
-
----
-<!-- _class: pro -->
-
-Preserving focus
-================
-
-When updating a fragment that contains focus, `{ focus: 'keep' }` preserves:
-
-- Cursor position ("Caret")
-- Selection range
-- Scroll position (X/Y)
-
-
----
-<!-- _class: pro -->
-
-Overlays are accessible
-=======================
-
-When on overlay is opened, the overlay is focused. Screen readers start reading the overlay content.
-
-When an overlay closed, focus is returned to the link that originally opened the modal.
-
-While the modal is open, focus is trapped in a cycle within the modal.
-
-While an overlay is open, background elements are marked as outside the modal.
-
----
-<!-- _class: pro -->
-
-Various A11Y improvements
-=========================
-
-- `[up-nav]` sets `[aria-current]` to the current link.
-- Links with an [`[up-instant]`](/a-up-instant) attribute can now be followed with the keyboard.
-- Fragments that are being [destroyed](/up.destroy) now get an [`[aria-hidden=true]`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-hidden_attribute)
-  attribute while its disappearance is being animated. When a fragment is being swapped with a new version, the old fragment version is also
-  given `[aria-hidden=true]` while it's disappearing.
-- Overlays now get an [`[aria-modal=true]`](https://a11ysupport.io/tech/aria/aria-modal_attribute) attribute.
-
-Some of these features were backported to Unpoly 0.6.2.
-
 
 ----
 
@@ -2891,7 +2955,7 @@ Extensive rework of almost all APIs.
 Roadmap
 =======
 
-There will be two major Unpoly releases in **December 2020 / January 2021**:
+There will be two major Unpoly releases in **early 2021**:
 
 - The current version 0.62 will be published as **Unpoly 1.0**.
 - **Unpoly 2.0** will be released as a major upgrade.
