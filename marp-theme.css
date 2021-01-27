@@ -103,16 +103,16 @@ section.topic h1 {
 
 section.pro:before,
 section.new:before {
-  content: 'PRO';
+  content: 'JAN';
   background-color: white;
   position: absolute;
   left: -110px;
   top: -60px;
   text-align: center;
-  padding: 100px 100px 10px;
+  padding: 90px 90px 10px;
   color: white;
   background-color: var(--textColor);
-  font-size: 30px;
+  font-size: 28px;
   font-weight: bold;
   transform: rotate(-45deg);
   /* box-shadow: 0 5px 40px rgba(40, 40, 40, 0.2); */

@@ -81,55 +81,7 @@ CSS selector extensions
 
 
 
----
 
-<!-- _class: pro -->
-
-
-Setting a default transition
-============================
-
-I'm not a big fan of animating *every* fragment update.
-
-**But since some of you do this**, here is how to set a default transition:
-
-```js
-up.fragment.config.navigateOptions.transition = 'cross-fade'
-```
-
-We're going to learn more about `up.fragment.config.navigateOptions` in a minute.
-
-
-
-
-
-
-
----
-<!-- _class: pro -->
-
-Remembering the current layer
-=============================
-
-Like most functions, `up.layer.dismiss()` will affect the "current" layer,\
-so it's an alias for `up.layer.current.dismiss()`.
-
-`up.layer.current` is set to the right layer in compilers and most events, even if that layer is not the "front" layer. E.g. if you're compiling a fragment for a background layer, `up.layer.current` will be
-the background layer during compilation.
-
-
-If you have async code, the current layer may change when your callback is called.\
-You may also retrieve the current layer for later reference:
-
-```js
-function dismissCurrentIn(seconds) {
-  let savedLayer = up.layer.current // returns an up.Layer object
-  let dismiss = () => savedLayer.dismiss()
-  setTimeout(dismiss, seconds * 1000)
-}
-
-dismissCurrentIn(10) // 
-```
 
 
 
@@ -153,37 +105,14 @@ console.log(response.text)
 ---
 <!-- _class: pro -->
 
-Content Security Policy
-=======================
+This is all of `unpoly-bootstrap4.scss`:
 
-By choosing a strict CSP, you also decide against using event handlers in your HTML.
-
-Handlers like `[up-on-accepted]` cannot work with CSP:
-
-```html
-<a href="/contacts/new"
-  up-layer="new"
-  up-accept-location="/contacts/$id"
-  up-on-accepted="up.reload('.table')">
-  ...
-</a>  
-```
-
-You will need to move your JavaScript code into your JavaScript sources.
-
----
-<!-- _class: pro -->
-
-This is easier now that event handlers can change render options:
-
-```html
-<a href="/contacts/new" class="add-contact" up-follow>...</a>
-```
-
-```js
-up.on('up:link:follow', '.add-contact', function(event) {
-  event.renderOptions.layer = 'new'
-  event.renderOptions.acceptLocation = '/contacts/$id'
-  event.renderOptions.onAccepted = (event) => up.reload('.table')
-})
+```css
+up-modal, up-drawer, up-popup {
+  .container, .container-fluid {
+    padding-left: 0;  /* The overlay box already has padding */
+    padding-right: 0; /* The overlay box already has padding */
+    max-width: none;  /* The overlay box already has max-width */
+  }
+}
 ```

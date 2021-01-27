@@ -26,6 +26,7 @@ who want to learn about the major changes in Unpoly 2.**
 
 
 ---
+<!-- _class: pro -->
 
 
 Roadmap
@@ -61,6 +62,7 @@ I also looked through a lot of code on our Gitlab to see how Unpoly was used in 
 
 
 ----
+<!-- _class: pro -->
 
 Unpoly 2 objectives
 ===================
@@ -110,14 +112,6 @@ Extensive improvements for almost all APIs.
 </div>
 </div>
 
----
-<!-- _class: pro -->
-
-Some slides have a **PRO** marker in the top left corner.
-
-These are advanced topics.
-
-We will cover these in our next session in January.
 
 ---
 
@@ -183,24 +177,10 @@ I know that many of you are maintaining large apps with Unpoly 0.62.
 You will see some major changes in these slides, but **don't panic**!\
 Unpoly 2 keeps aliases for deprecated APIs going back to 2016.
 
----
 
-<!-- _class: new -->
-
-
-<p>Calls to old APIs will be forwarded to the new version and log a deprecation notice with a trace.
-</p>
-
-<img src="./images/log-deprecation.png" alt="New log" class="picture" style="display: block; margin: 0.6em 0 1.1em 0">
-
-<p>This way you upgrade Unpoly, revive your application with few changes,<br>
-then replace deprecated API calls under green tests.</p>
-
-<p>
-If you prefer errors to warnings, you can set <code>up.migrate.config.logLevel = 'error'</code>.
-</p>
 
 ---
+<!-- _class: pro -->
 
 <div class="row">
 <div class="col">
@@ -236,6 +216,22 @@ If you prefer errors to warnings, you can set <code>up.migrate.config.logLevel =
 
 
 ---
+<!-- _class: new -->
+
+<p>Calls to old APIs will be forwarded to the new version and log a deprecation notice with a trace.
+</p>
+
+<img src="./images/log-deprecation.png" alt="New log" class="picture" style="display: block; margin: 0.6em 0 1.1em 0">
+
+<p>This way you upgrade Unpoly, revive your application with few changes,<br>
+then replace deprecated API calls under green tests.</p>
+
+<p>
+If you prefer errors to warnings, you can set <code>up.migrate.config.logLevel = 'error'</code>.
+</p>
+
+
+---
 
 <!-- _class: new -->
 
@@ -246,8 +242,7 @@ All aliases are shipped as a separate file `unpoly-migrate.js`.
 Once you have fixed deprecated usages you can remove this from your build.
 
 ---
-
-<!-- _class: topic -->
+<!-- _class: topic pro -->
 
 # Kill boilerplate configuration
 
@@ -358,6 +353,8 @@ Individual links may opt out by setting `[up-instant=false]` or `[up-preload=fal
 ```
 
 ---
+<!-- _class: pro -->
+
 
 Main targets
 ============
@@ -382,6 +379,8 @@ Unpoly 2 lets you mark elements as default targets using the `[up-main]` attribu
 ```
 
 ---
+<!-- _class: pro -->
+
 
 ## Links work without target
 
@@ -435,6 +434,27 @@ up.layer.config.overlay.mainTargets.push('.layout--content') // for all overlay 
 ```
 
 
+
+
+---
+
+Setting a default transition
+============================
+
+I'm not a big fan of animating *every* fragment update.
+
+**But since some of you do this**, here is how to set a default transition:
+
+```js
+up.fragment.config.navigateOptions.transition = 'cross-fade'
+```
+
+We're going to learn more about `up.fragment.config.navigateOptions` in a minute.
+
+
+
+
+
 ---
 <!-- _class: pro -->
 
@@ -477,21 +497,6 @@ up.fragment.config.badTargetClasses.push(
 )
 ```
 
----
-<!-- _class: pro -->
-
-This is all of `unpoly-bootstrap4.scss`:
-
-```css
-up-modal, up-drawer, up-popup {
-  .container, .container-fluid {
-    padding-left: 0;  /* The overlay box already has padding */
-    padding-right: 0; /* The overlay box already has padding */
-    max-width: none;  /* The overlay box already has max-width */
-  }
-}
-```
-
 ----
 <!-- _class: pro -->
 
@@ -510,17 +515,21 @@ Unpoly 2 now supports the three major Bootstrap versions we're using:
 
 
 ---
-<!-- _class: 'topic' -->
+<!-- _class: topic pro -->
 
 # Layer API
 
 ---
+<!-- _class: pro -->
+
 
 # Demo
 
-🎥 *Show infinite stacking: Company / Project / Budget*
+🎥 *Show in the demo app*:
 
-🎥 *Show returning with value: Create budget from project details*
+- *Infinite stacking: Company / Project / Budget*
+
+- *Returning with value: Create budget from project details*
 
 ---
 
@@ -549,25 +558,7 @@ An *overlay* is any layer that is not the root layer.
 
 
 ---
-
-<!--
-
-# A single attribute for depth changes
-
-You can always look at `[up-layer]` to know what layer is going to be updated.
-
-If there is no `[up-layer]` attribute, you are going to update the current layer.
-
-
-## Deprecation of old macros
-
-`[up-modal]` is deprecated. Use `[up-layer=modal]` or `[up-layer=new]` instead.\
-You can configure the mode for `[up-layer=new]` in `up.layer.config.mode`.
-
-`[up-popup]` is deprecated. Use `[up-layer=popup]` instead.
-
--->
-
+<!-- _class: pro -->
 
 
 Layers can be stacked infinitely
@@ -588,6 +579,7 @@ Example from a real application:
 
 
 ---
+<!-- _class: pro -->
 
 Layers are fully isolated
 =========================
@@ -613,6 +605,7 @@ If there is no `[up-layer]` attribute, you are going to update the current layer
 
 
 ----
+<!-- _class: pro -->
 
 ## CSS selectors are matched in the current layer
 
@@ -638,7 +631,7 @@ up.fragment.get(element, '.child') // will find .child in element's descendants
 ```
 
 ---
-<!-- _class: pro no-watermark -->
+<!-- _class: no-watermark -->
 
 <h2 class="center">Referring to layers</h2>
 
@@ -722,6 +715,36 @@ up.on('up:request:load', callback) // listen to events from all layers
 
 
 
+
+---
+
+Remembering the current layer
+=============================
+
+Like most functions, `up.layer.dismiss()` will affect the "current" layer,\
+so it's an alias for `up.layer.current.dismiss()`.
+
+`up.layer.current` is set to the right layer in compilers and most events, even if that layer is not the "front" layer. E.g. if you're compiling a fragment for a background layer, `up.layer.current` will be
+the background layer during compilation.
+
+
+If you have async code, the current layer may change when your callback is called.\
+You may also retrieve the current layer for later reference:
+
+```js
+function dismissCurrentIn(seconds) {
+  let savedLayer = up.layer.current // returns an up.Layer object
+  let dismiss = () => savedLayer.dismiss()
+  setTimeout(dismiss, seconds * 1000)
+}
+
+dismissCurrentIn(10) // 
+```
+
+
+
+
+
 ---
 <!-- _class: pro -->
 
@@ -732,28 +755,28 @@ The server now knows if the request is targeting an overlay.\
 The following is Ruby code (`unpoly-rails` gem):
 
 ```ruby
-up.layer.mode      # 'drawer'
 up.layer.overlay?  # true
 up.layer.root?     # false
+up.layer.mode      # 'drawer'
 ```
 
 Note that fragment updates may target different layers for successful (HTTP status `200 OK`) and failed (status `4xx` or `5xx`) responses. Use `up.fail_target` to learn about the
 layer targeted for a failed update:
 
 ```ruby
-up.fail_layer.mode      # 'root'
 up.fail_layer.overlay?  # false
 up.fail_layer.root?     # true
+up.fail_layer.mode      # 'root'
 ```
 
 
 ---
-
-<!-- { _class: 'topic' } -->
+<!-- _class: topic pro -->
 
 # Sub-interactions
 
 ---
+<!-- _class: pro -->
 
 Why we need sub-interactions
 ============================
@@ -770,8 +793,7 @@ This story is the base use case for a sub-interaction:
   The project form should now have the newly created company selected.
 
 ----
-
-<!-- _class: no-watermark no-padding -->
+<!-- _class: pro no-watermark no-padding -->
 
 <img src="images/subinteraction-flow.svg" height="100%">
 
@@ -1021,12 +1043,12 @@ For this Unpoly 2 distinguishes two kinds close intents:
 
 
 ---
-
-<!-- _class: no-watermark -->
+<!-- _class: pro no-watermark -->
 
 <img src="images/close-intent.png" class="picture">
 
 ---
+<!-- _class: pro -->
 
 
 <h2>
@@ -1140,7 +1162,6 @@ end
 ```
 
 ---
-<!-- _class: pro -->
 
 Use case: Re-using interactions in an overlay, but with a variation
 --------------------------------------------------------------------
@@ -1152,7 +1173,6 @@ Context is useful when you want to re-use an existing interaction in an overlay,
 - In this case the contact index should show an additional message "Pick a contact for project Foo", replacing `Foo` with the actual name of the project.
 
 ---
-<!-- _class: pro -->
 
 We can implement such an contact picker with this ERB template:
 
@@ -1175,7 +1195,6 @@ We can implement such an contact picker with this ERB template:
 Our effective contact object would now be something like `{ project: 'Hosting 2021' }`.
 
 ---
-<!-- _class: pro -->
 
 The server can inspect the context in `/contacts/index.erb`:
 
@@ -1192,6 +1211,8 @@ The server can inspect the context in `/contacts/index.erb`:
 ```
 
 ---
+<!-- _class: pro -->
+
 
 New overlay HTML structure
 ===========================
@@ -1240,6 +1261,7 @@ The HTML of other overlay modes was changed in the same way (e.g. `<up-popup>`).
 
 
 ---
+<!-- _class: pro -->
 
 
 Customizing overlays with CSS
@@ -1264,7 +1286,7 @@ up-popup-content {
 ```
 
 ---
-
+<!-- _class: pro -->
 
 Overlay classes
 ===============
@@ -1321,6 +1343,7 @@ up-modal.warning up-modal-box {
 ```
 
 ---
+<!-- _class: pro -->
 
 Overlay sizes
 =============
@@ -1412,7 +1435,6 @@ if (isChristmas()) {
 ```
 
 ---
-<!-- _class: pro -->
 
 Drawers and modal "flavors"
 ===========================
@@ -1463,11 +1485,12 @@ Unpoly 2 reworks that behavior to what you would expect:
 - Layers without history support the `.up-current` class.
 
 ----
-<!-- _class: topic -->
+<!-- _class: pro topic -->
 
 # Navigation intent
 
 ---
+<!-- _class: pro -->
 
 Switching screens vs. updating boxes
 ====================================
@@ -1485,6 +1508,7 @@ While these are good defaults when the user follows a link a to *navigate* to a 
 they get in the way when you only want to update a small box.
 
 ----
+<!-- _class: pro -->
 
 Actual usage often looked like this:
 
@@ -1498,6 +1522,7 @@ up.replace('.message-count', '/inbox', {
 ```
 
 ----
+<!-- _class: pro -->
 
 Unpoly 2 defaults are opt-in, not opt-out
 =========================================
@@ -1519,6 +1544,7 @@ up.render('.message-count', { url: '/inbox', history: true })
 ```
 
 ---
+<!-- _class: pro -->
 
 ## Navigation defaults
 
@@ -1607,7 +1633,7 @@ Screen readers use speech synthesis that read a webpage aloud.
 
 They come with many additional keyboard shortcuts to jump between page elements and describe what is visible on the screen.
 
-A good reader for Chrome is the [Screen Reader extension](https://chrome.google.com/webstore/detail/screen-reader/kgejglhpjiefppelpmljglcjbhoiplfn).
+A good screen reader for Chrome is the [Screen Reader extension](https://chrome.google.com/webstore/detail/screen-reader/kgejglhpjiefppelpmljglcjbhoiplfn) ("VoiceVox").
 
 
 ---
@@ -1621,6 +1647,7 @@ A good reader for Chrome is the [Screen Reader extension](https://chrome.google.
 | `Shift+Tab`       | Move to previous focusable element |
 | `ALT+Shift+Down`  | Move down    |
 | `ALT+Shift+Up`    | Move up      |
+| `ALT+Shift+N > H` | Move to next heading |
 | `ALT+Shift+R`     | Start reading text from focused element |
 | `CTRL`            | Stop reading |
 | `Enter`           | Activate link |
@@ -1634,6 +1661,8 @@ A good reader for Chrome is the [Screen Reader extension](https://chrome.google.
 
 ## Breaking screen readers with JavaScript
 
+Not every site works well with a screen reader.
+
 When you build a site with semantic HTML and no JavaScript, it will be reasonably accessible.\
 It's not great, but it's mostly OK.
 
@@ -1646,7 +1675,7 @@ As soon as you change content with JavaScript you will probably break screen rea
 
 <br>
 
-🎥 *Demo with VoiceVox on <https://railslts.com>*
+🎥 *Demo with VoiceVox on <https://railslts.com>* (share Chrome tab for sound!)
 
 
 
@@ -1681,6 +1710,10 @@ The reading position is always moved to the next logical element.
 - *When an overlay is closed, focus returns to the opening link*
 - *Screen reader announcements as we enter and exit overlays*
 
+----
+
+(Reset screen sharing)
+
 
 ----
 <!-- _class: new -->
@@ -1688,25 +1721,25 @@ The reading position is always moved to the next logical element.
 ## How focus is moved by default
 
 When navigating, Unpoly will try to automatically guide the focus to the
-next natural reading position.
+next logical reading position.\
+This is usually the new fragment.
 
-Unpoly will try **in this order**:
+More precisely, Unpoly will try **in this order**:
 
 - Focus a `#hash` in the URL
 - Focus an `[autofocus]` element in the new fragment
-- Focus the new fragment if it matches a main target
+- Focus the new fragment **if** it matches a main target
 
-You may configure this behavior with `up.fragment.config.autoFocus`.
+You may configure this behavior with `up.fragment.config.autoFocus`,\
+e.g. to auto-focus headlines or error messages.
 
 ---
 <!-- _class: new -->
 
 ## Explicit focus control
 
-Unpoly 2 also provides an `[up-focus]` attribute (or `{ focus }` option).\
+Unpoly 2 also provides an `[up-focus]` attribute (or `{ focus }` option for JS).\
 Use it to **explicitely move** the user's focus as you update fragments.
-
-When you set the `{ scroll }` option you should also think about setting the `{ focus }` option.
 
 ## Example
 
@@ -1716,6 +1749,7 @@ This would focus the `.avatar` element in the new fragment:
 <a href="/users/5" up-focus=".avatar">Load profile</a>
 ```
 
+
 ----
 <!-- _class: new -->
 
@@ -1724,14 +1758,21 @@ Focus options
 
 | Focus option | Meaning |
 |-------------|---------|
-| `'keep'`      | Preserve focus if possible |
-| `'target'`    | Focus the updated fragment |
-| `'layer'`     | Focus the updated layer |
-| `'autofocus'` | Focus any `[autofocus]` elements in the new fragment |
-| `'hash'`      | Focus the URL's `#hash` target (if any) |
-| `'auto'`      | Shortcut for `['hash', 'autofocus', 'target']` (navigation default) |
-| `Element`     | Focus this element |
+| `keep`      | Preserve focus if possible |
+| `target`    | Focus the updated fragment |
+| `layer`     | Focus the updated layer |
+| `autofocus` | Focus any `[autofocus]` elements in the new fragment |
+| `hash`      | Focus the URL's `#hash` target (if any) |
+| `auto`      | Focus the updated fragment if it's a main target |
+| `<Element>`     | Focus this element |
 | `.css-selector` | Focus an element matching this CSS selector |
+
+
+
+---
+<!-- _class: new -->
+
+When you set the `{ scroll }` option you should also think about setting the `{ focus }` option.
 
 
 ---
@@ -1751,18 +1792,17 @@ When the focused fragment is rediscovered in the new content, the following prop
 When validating with `[up-validate]`, Unpoly will preserve focus when possible.
 
 
-
 ---
 <!-- _class: new -->
 
 ## Focus in overlays
 
-Unpoly 2 follows best practices for controlling focus in modal overlays:
+Unpoly 2 follows best practices for controlling focus in overlays:
 
 - When on overlay is opened, the overlay is focused.\
   Screen readers start reading the overlay content.
 
-- When an overlay closed, focus is returned to the link that opened the modal.
+- When an overlay is closed, focus is returned to the link that opened the modal.
 
 - While the modal is open, focus is trapped in a cycle within the overlay.\
   The user cannot focus elements outside the overlay.
@@ -1800,21 +1840,19 @@ Various A11Y improvements
   given [`[aria-hidden=true]`](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/ARIA_Techniques/Using_the_aria-hidden_attribute) while it's disappearing.
 - Overlays now get an [`[aria-modal=true]`](https://a11ysupport.io/tech/aria/aria-modal_attribute) attribute.
 
-Some of these features were backported to Unpoly 0.6.2.
+Some of these features were backported to Unpoly 0.62.
 
 
 
 
 
 ---
-
-<!-- _class: 'topic' -->
+<!-- _class: topic pro -->
 
 # Quality of life improvements
 
 
 ---
-
 <!-- _class: pro -->
 
 Self-contained components
@@ -1836,7 +1874,7 @@ In Unpoly 2 the position of a clicked link is considered when deciding which ele
 Example
 --------
 
-Let's say we have two links that replace `.card`:
+Let's say we have three links that replace `.card`:
 
 ```html
 <div class="card">
@@ -1870,23 +1908,23 @@ This also works with descendant selectors:
 
 ```html
 <div class="card">
-  <a href="/cards/1/links" up-target=".card .card-links">Show card #2 links</a>
-  <div class="card-links"></div>
+  <a href="/cards/1/authors" up-target=".card .authors">Show card #2 authors</a>
+  <div class="authors"></div>
 </div>
 
 <div class="card">
-  <a href="/cards/2/links" up-target=".card .card-links">Show card #2 links</a>
-  <div class="card-links"></div>
+  <a href="/cards/2/authors" up-target=".card .authors">Show card #2 authors</a>
+  <div class="authors"></div>
 </div>
 
 <div class="card">
-  <a href="/cards/3/links" up-target=".card .card-links">Show card #3 links</a>
-  <div class="card-links"></div>
+  <a href="/cards/3/authors" up-target=".card .authors">Show card #3 authors</a>
+  <div class="authors"></div>
 </div>
 ```
 
-<div class="negative"><b>When clicking "Show card #2 links", Unpoly 2 replaces the first card's links</b></div>
-<div class="positive"><b>When clicking "Show card #2 links", Unpoly 2 replaces the second card's links.</b></div>
+<div class="negative"><b>When clicking "Show card #2 authors", Unpoly 2 replaces the first card's authors</b></div>
+<div class="positive"><b>When clicking "Show card #2 authors", Unpoly 2 replaces the second card's authors.</b></div>
 
 
 
@@ -2020,16 +2058,12 @@ document.addEventListener('up:click', function(event) {
 Cancelation is forwarded
 ------------------------
 
-If the user cancels an `up:click` event, the underlying `click` or `mousedown` will also be canceled.
-The following cancelation methods will be forwarded:
-
-- `event.stopPropagation()`
-- `event.stopImmediatePropagation()`
-- `event.preventDefault()`
+If the user cancels an `up:click` event with `event.preventDefault()`,\
+the underlying `click` or `mousedown` will also be canceled.
 
 
 ----
-<!-- _class: new -->
+<!-- _class: pro -->
 
 Unified scroll options
 ======================
@@ -2048,17 +2082,17 @@ The `{ scroll }` option accepts one of the following values:
 | Option value         | Effect                                          |
 |----------------------|-------------------------------------------------|
 | `false`              | Don't scroll                                    |
-| `'target'`           | Reveal the updated fragment (Unpoly 1 default)  |
-| `'top'`              | Scroll to the top                               |
-| `'restore'`          | Restore last known scroll position for URL      |
-| `'hash'`             | Scroll to a #hash in the updated URL            |
+| `target`           | Reveal the updated fragment (Unpoly 1 default)  |
+| `top`              | Scroll to the top                               |
+| `restore`          | Restore last known scroll position for URL      |
+| `hash`             | Scroll to a #hash in the updated URL            |
 | `.css-selector`      | The CSS selector of the element to reveal       |
-| `Element`            | Reveal the given element                        |
-| `Function(fragment)` | Custom scrolling logic                          |
-| `'auto'`             | Scroll to the top **if** updating a main target (see below) |
+| `<Element>`            | Reveal the given element                        |
+| `<Function(fragment)>` | Custom scrolling logic                          |
+| `auto`             | Scroll to the top **if** updating a main target (see below) |
 
 ---
-
+<!-- _class: pro -->
 
 Calmer scrolling
 ================
@@ -2078,6 +2112,7 @@ However, this default also casued scrolling when a smaller fragment was updated.
 E.g. when the user switches between tabs, they wouldn't expect scroll changes.
 
 ---
+<!-- _class: pro -->
 
 ## Unpoly 2 no longer scrolls by default
 
@@ -2091,7 +2126,6 @@ When navigating the new default is `{ scroll: 'auto' }`, which *sometimes* scrol
 You may configure this behavior with `up.fragment.config.autoScroll`.
 
 ---
-<!-- _class: pro -->
 
 Tuning the scroll effect
 ===========================
@@ -2353,6 +2387,55 @@ end
 
 This will render a 200 OK response with a header `X-Up-Target: :none` and an empty body.
 
+
+
+---
+<!-- _class: pro -->
+
+Optimizing cacheability
+=======================
+
+Unpoly sends some additional HTTP headers to provide information about the fragment update:
+
+| Request property               | Request header      |
+| ------------------------------ | ------------------- |
+| `up.Request#target`            | `X-Up-Target`       |
+| `up.Request#failTarget`        | `X-Up-Fail-Target`  |
+| `up.Request#context`     🆕 | `X-Up-Context`      |
+| `up.Request#failContext` 🆕 | `X-Up-Fail-Context` |
+| `up.Request#mode`        🆕 | `X-Up-Mode`         |
+| `up.Request#failMode`    🆕 | `X-Up-Fail-Mode`    |
+
+The server may return an optimized response based on these properties,
+e.g. by omitting a navigation bar that is not targeted.
+
+---
+<!-- _class: pro -->
+
+ To **improve cacheability**, you may may set
+`up.network.config.requestMetaKeys` to a shorter list of property keys:
+
+```js
+// Server only optimizes for layer mode, but not for target selector
+up.network.config.requestMetaKeys = ['mode']'
+```
+
+You may also send different request properties for different URLs:
+
+```javascript
+up.network.config.requestMetaKeys = function(request) {
+  if (request.url == '/search') {
+    // The server optimizes responses on the /search route.
+    return ['target', 'failTarget']
+  } else {
+    // The server doesn't optimize any other route,
+    // so configure maximum cacheability.
+    return []
+  }
+}
+```
+
+
 ---
 <!-- _class: pro -->
 
@@ -2374,7 +2457,7 @@ Subsequent requests would see a non-Unpoly request.
 **In Unpoly 2 meta information is persisted across redirects.**
 
 ---
-<!-- _class: pro no-watermark -->
+<!-- _class: no-watermark -->
 
 **Example:** Below the `#create` action saves a `Note` record and redirects to
 that note's `#show` action. In Unpoly 2 the `#show` can still see if the
@@ -2536,52 +2619,6 @@ up.destroy(element, {
 
 
 ---
-<!-- _class: pro -->
-
-Optimizing cacheability
-=======================
-
-Unpoly sends some additional HTTP headers to provide information about the fragment update:
-
-| Request property               | Request header      |
-| ------------------------------ | ------------------- |
-| `up.Request#target`            | `X-Up-Target`       |
-| `up.Request#failTarget`        | `X-Up-Fail-Target`  |
-| `up.Request#context`     🆕 | `X-Up-Context`      |
-| `up.Request#failContext` 🆕 | `X-Up-Fail-Context` |
-| `up.Request#mode`        🆕 | `X-Up-Mode`         |
-| `up.Request#failMode`    🆕 | `X-Up-Fail-Mode`    |
-
-The server may return an optimized response based on these properties,
-e.g. by omitting a navigation bar that is not targeted.
-
----
-<!-- _class: pro -->
-
- To **improve cacheability**, you may may set
-`up.network.config.metaKeys` to a shorter list of property keys:
-
-```js
-// Server only optimizes for layer mode, but not for target selector
-up.network.config.metaKeys = ['mode']'
-```
-
-You may also send different request properties for different URLs:
-
-```javascript
-up.network.config.metaKeys = function(request) {
-  if (request.url == '/search') {
-    // The server optimizes responses on the /search route.
-    return ['target', 'failTarget']
-  } else {
-    // The server doesn't optimize any other route,
-    // so configure maximum cacheability.
-    return []
-  }
-}
-```
-
----
 
 
 Unified fragment update API
@@ -2695,10 +2732,10 @@ If you have compilers that only set default attributes, consider using a single 
 Advanced example
 ----------------
 
-Assume we give a new attribute `[authorize]` to links that require a signed-in user:
+Assume we give a new attribute `[require-session]` to links that require a signed-in user:
 
 ```html
-<a href="/projects" authorize>My projects</a>
+<a href="/projects" require-session>My projects</a>
 ```
 
 When clicking the link without a session, a login form should open in a modal overlay.
@@ -2707,7 +2744,7 @@ When the user has signed in successfully, the overlay closes and the original li
 We can implement this with the following handler:
 
 ```js
-up.on('up:link:follow', 'a[authorize]', async function(event) {
+up.on('up:link:follow', 'a[require-session]', async function(event) {
   if (!isSignedIn()) {
     event.preventDefault()
     await up.layer.ask('/session/new', { acceptLocation: '/welcome' })
@@ -2715,6 +2752,46 @@ up.on('up:link:follow', 'a[authorize]', async function(event) {
   }
 })
 ```
+
+
+
+
+---
+
+Content Security Policy
+=======================
+
+By choosing a strict CSP, you also decide against using event handlers in your HTML.
+
+Handlers like `[up-on-accepted]` cannot work with CSP:
+
+```html
+<a href="/contacts/new"
+  up-layer="new"
+  up-accept-location="/contacts/$id"
+  up-on-accepted="up.reload('.table')">
+  ...
+</a>  
+```
+
+You will need to move your JavaScript code into your JavaScript sources.
+
+---
+
+This is easier now that event handlers can change render options:
+
+```html
+<a href="/contacts/new" class="add-contact" up-follow>...</a>
+```
+
+```js
+up.on('up:link:follow', '.add-contact', function(event) {
+  event.renderOptions.layer = 'new'
+  event.renderOptions.acceptLocation = '/contacts/$id'
+  event.renderOptions.onAccepted = (event) => up.reload('.table')
+})
+```
+
 
 
 ---
@@ -2875,6 +2952,7 @@ up.on('up:fragment:loaded', (event) => {
 # Summary
 
 ---
+<!-- _class: pro -->
 
 Breaking changes
 =======================
@@ -2950,6 +3028,7 @@ Extensive rework of almost all APIs.
 
 
 ---
+<!-- _class: pro -->
 
 
 Roadmap
