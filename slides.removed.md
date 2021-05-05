@@ -116,3 +116,55 @@ up-modal, up-drawer, up-popup {
   }
 }
 ```
+
+
+
+<div class="columns">
+
+Kill boilerplate configuration
+------------------------------
+- Configure default targets.
+- Handle all links/forms without helpers and macros.
+- Minimal Bootstrap integration you actually want to use.
+
+New layers
+----------
+- A new *layer* API replaces modals and popups. The root page is also a layer.
+- Layers are now isolated. They cannot accidentally target another layer, or accidentally react to events from other layers.
+- Layers may be stacked infinitely.
+- Customize layers with fixed sizes, classes, custom dismissability.
+- New full-screen overlay mode `cover`.
+
+Sub-interactions
+----------------
+- Complex interactions may be paused by branching off a sub-interaction into an overlay.
+- When opening an overlay you may define a *condition* when the sub-interaction ends.
+- Overlay results (selection, finished record creation) are propagated back to parent layer.
+- JavaScript may treat overlays as an async operation with a result value.
+
+Navigation intent
+------------------
+- Not every fragment update means a user navigation (switching screens vs. updating a small fragment).
+- Only user navigation scrolls, focuses, falls back to default targets.
+- User navigation now aborts earlier requests.
+
+Accessibility
+-------------
+- New `{ focus }` option lets you control focus after a fragment update.
+- Overlays are accessible by trapping focus and removing other layers from the accessibility tree.
+- Focus, selection, scroll positions within updated fragments are now preserved.
+- Support keyboard navigations for all interactive elements.
+
+Quality of live improvements
+----------------------------
+- Unified fragment update API.
+- Server can emit emits, close overlays, clear the cache, ...
+- Event handler may change render options.
+- Calmer scrolling.
+- Polling.
+- New `:closest` selector for targeting self-contained components.
+- Preloading eats less bandwidth and server resources
+
+</div>
+
+----

@@ -26,13 +26,12 @@ who want to learn about the major changes in Unpoly 2.**
 
 
 ---
-<!-- _class: pro -->
 
 
 Roadmap
 =======
 
-There will be two major Unpoly releases in **early 2021**:
+There will be two major Unpoly releases in **2021**:
 
 - The current version 0.62 will be published as **Unpoly 1.0**.
 - **Unpoly 2.0** will be released as a major upgrade.
@@ -49,6 +48,7 @@ and the limits they ran into when using Unpoly for non-trivial interactions.
 
 I also looked through a lot of code on our Gitlab to see how Unpoly was used in the wild.
 
+
 <!--
 
 | Date    | Event              |
@@ -62,19 +62,9 @@ I also looked through a lot of code on our Gitlab to see how Unpoly was used in 
 
 
 ----
-<!-- _class: pro -->
 
 Unpoly 2 objectives
 ===================
-
-<!--
-- Kill boilerplate configuration
-- Layer rewrite
-- Sub-interactions
-- Navigation intent
-- Accessibility
-- Quality of live improvements
--->
 
 <div class="row">
 <div class="col">
@@ -87,7 +77,7 @@ New, unopionated Bootstrap integration.
 ### Layer API
 
 A new layer API replaces modals and popups.\
-Layers are isolated and can be stacked infinitly.
+Layers are isolated and can be stacked infinitely.
 
 ### Sub-interactions
 
@@ -115,60 +105,6 @@ Extensive improvements for almost all APIs.
 
 ---
 
-
-<!--
-
-<div class="columns">
-
-Kill boilerplate configuration
-------------------------------
-- Configure default targets.
-- Handle all links/forms without helpers and macros.
-- Minimal Bootstrap integration you actually want to use.
-
-New layers
-----------
-- A new *layer* API replaces modals and popups. The root page is also a layer.
-- Layers are now isolated. They cannot accidentally target another layer, or accidentally react to events from other layers.
-- Layers may be stacked infinitely.
-- Customize layers with fixed sizes, classes, custom dismissability.
-- New full-screen overlay mode `cover`.
-
-Sub-interactions
-----------------
-- Complex interactions may be paused by branching off a sub-interaction into an overlay.
-- When opening an overlay you may define a *condition* when the sub-interaction ends.
-- Overlay results (selection, finished record creation) are propagated back to parent layer.
-- JavaScript may treat overlays as an async operation with a result value.
-
-Navigation intent
-------------------
-- Not every fragment update means a user navigation (switching screens vs. updating a small fragment).
-- Only user navigation scrolls, focuses, falls back to default targets.
-- User navigation now aborts earlier requests.
-
-Accessibility
--------------
-- New `{ focus }` option lets you control focus after a fragment update.
-- Overlays are accessible by trapping focus and removing other layers from the accessibility tree.
-- Focus, selection, scroll positions within updated fragments are now preserved.
-- Support keyboard navigations for all interactive elements.
-
-Quality of live improvements
-----------------------------
-- Unified fragment update API.
-- Server can emit emits, close overlays, clear the cache, ...
-- Event handler may change render options.
-- Calmer scrolling.
-- Polling.
-- New `:closest` selector for targeting self-contained components.
-- Preloading eats less bandwidth and server resources
-
-</div>
-
-----
---->
-
 Changes ahead, but don't panic!
 ===============================
 
@@ -180,7 +116,6 @@ Unpoly 2 keeps aliases for deprecated APIs going back to 2016.
 
 
 ---
-<!-- _class: pro -->
 
 <div class="row">
 <div class="col">
@@ -216,7 +151,6 @@ Unpoly 2 keeps aliases for deprecated APIs going back to 2016.
 
 
 ---
-<!-- _class: new -->
 
 <p>Calls to old APIs will be forwarded to the new version and log a deprecation notice with a trace.
 </p>
@@ -226,23 +160,18 @@ Unpoly 2 keeps aliases for deprecated APIs going back to 2016.
 <p>This way you upgrade Unpoly, revive your application with few changes,<br>
 then replace deprecated API calls under green tests.</p>
 
-<p>
-If you prefer errors to warnings, you can set <code>up.migrate.config.logLevel = 'error'</code>.
-</p>
-
 
 ---
-
-<!-- _class: new -->
 
 ## Removing aliases from your build
 
 All aliases are shipped as a separate file `unpoly-migrate.js`.
 
+If you prefer errors to warnings, you can set <code>up.migrate.config.logLevel = 'error'</code>.
+
 Once you have fixed deprecated usages you can remove this from your build.
 
 ---
-<!-- _class: topic pro -->
 
 # Kill boilerplate configuration
 
@@ -308,12 +237,15 @@ You may still opt out individual links or forms by setting `[up-follow=false]`:
 <a href="/backend" up-follow="false">...</a>
 ```
 
-To except *all* external links and forms, skip URL with a schema separator (`://`):
+Unpoly comes pre-configured to *never* follow:
 
-```js
-up.link.config.followSelectors.push('a[href]:not([href*="://"])')
-up.form.config.submitSelectors.push('form:not([action*="://"])')
-```
+- Links with a cross-origin `[href]`.
+- Links with a `[target]` attribute (to target an iframe or open new browser tab).
+- Links with a `[rel=download]` attribute.
+- Links with an `[href]` attribute starting with `javascript:`.
+- Links with an `[href="#"]` attribute that don't also have local HTML
+  in an `[up-document]`, `[up-fragment]` or `[up-content]` attribute.
+- Links matching `up.link.config.noFollowSelectors`
 
 ---
 
@@ -352,9 +284,9 @@ Individual links may opt out by setting `[up-instant=false]` or `[up-preload=fal
 <a href="/expensive-path" up-preload="false">
 ```
 
----
-<!-- _class: pro -->
+You may also configure global exceptions in `up.link.config.noInstantSelectors` and `up.link.config.noPreloadSelectors`.
 
+---
 
 Main targets
 ============
@@ -379,8 +311,6 @@ Unpoly 2 lets you mark elements as default targets using the `[up-main]` attribu
 ```
 
 ---
-<!-- _class: pro -->
-
 
 ## Links work without target
 
@@ -433,9 +363,6 @@ up.layer.config.drawer.mainTargets.push('.menu')             // for drawer overl
 up.layer.config.overlay.mainTargets.push('.layout--content') // for all overlay modes
 ```
 
-
-
-
 ---
 
 Setting a default transition
@@ -451,14 +378,9 @@ up.fragment.config.navigateOptions.transition = 'cross-fade'
 
 We're going to learn more about `up.fragment.config.navigateOptions` in a minute.
 
-
-
-
-
 ---
-<!-- _class: pro -->
 
-Reworked Boostrap integration
+Reworked Bootstrap integration
 =============================
 
 
@@ -498,7 +420,6 @@ up.fragment.config.badTargetClasses.push(
 ```
 
 ----
-<!-- _class: pro -->
 
 ## Support for Bootstrap 3, 4 and 5
 
@@ -512,16 +433,12 @@ Unpoly 2 now supports the three major Bootstrap versions we're using:
 - `unpoly-bootstrap5.css`
 
 
-
-
 ---
-<!-- _class: topic pro -->
+<!-- _class: topic -->
 
 # Layer API
 
 ---
-<!-- _class: pro -->
-
 
 # Demo
 
@@ -532,7 +449,6 @@ Unpoly 2 now supports the three major Bootstrap versions we're using:
 - *Returning with value: Create budget from project details*
 
 ---
-
 
 New layer terminology
 ======================
@@ -545,7 +461,6 @@ An *overlay* is any layer that is not the root layer.
 
 <br>
 
-
 | Mode      | Description                        | Overlay? |
 | --------- | ---------------------------------- | -------- |
 | `root`    | The root page                      | no       |
@@ -555,11 +470,7 @@ An *overlay* is any layer that is not the root layer.
 | `cover` ✨  | Covers entire screen               | yes      |
 
 
-
-
 ---
-<!-- _class: pro -->
-
 
 Layers can be stacked infinitely
 ================================
@@ -579,7 +490,6 @@ Example from a real application:
 
 
 ---
-<!-- _class: pro -->
 
 Layers are fully isolated
 =========================
@@ -631,7 +541,7 @@ up.fragment.get(element, '.child') // will find .child in element's descendants
 ```
 
 ---
-<!-- _class: no-watermark -->
+<!-- _class: pro no-watermark -->
 
 <h2 class="center">Referring to layers</h2>
 
@@ -732,13 +642,13 @@ If you have async code, the current layer may change when your callback is calle
 You may also retrieve the current layer for later reference:
 
 ```js
-function dismissCurrentIn(seconds) {
+function dismissCurrentLayerIn(seconds) {
   let savedLayer = up.layer.current // returns an up.Layer object
   let dismiss = () => savedLayer.dismiss()
   setTimeout(dismiss, seconds * 1000)
 }
 
-dismissCurrentIn(10) // 
+dismissCurrentLayerIn(10) // 
 ```
 
 
@@ -771,12 +681,401 @@ up.fail_layer.mode      # 'root'
 
 
 ---
-<!-- _class: topic pro -->
+<!-- _class: pro -->
+
+Layer context
+=============
+
+The web platform gives you several tools to persist state across requests,\
+like cookies or session storage.
+
+But with overlays you need to store state *per layer*.
+
+Unpoly adds *layer context*, a key/value store that exists for
+the lifetime of a layer:
+
+
+| Store              | Scope  | Persistence    | Values     | Client-manageable | Server-manageable |
+|--------------------|--------|----------------|------------|-------------------|-------------------|
+| Local storage      | Domain | Permanentish   | String     | Yes               | &ndash;           |
+| Cookies            | Domain | Configurable   | String     | Configurable      | Yes               |
+| Session storage    | Tab    | Session        | String     | Yes               | &ndash;           |
+| Layer context 🆕   | Layer  | Session        | Object      | Yes               | Yes               |
+
+
+---
+<!-- _class: pro -->
+
+Initializing the context object
+-------------------------------
+
+The default context is an empty object (`{}`).
+
+You may initialize the context object when opening a layer:
+
+```js
+up.layer.open({ url: '/games/new', context: { lives: 3 } })
+```
+
+Or from HTML:
+
+```html
+<a href='/games/new' up-layer='new' up-context='{ "lives": 3 }'>
+  Start a new game
+</a>  
+```
+
+---
+<!-- _class: pro -->
+
+Working with the context object
+-------------------------------
+
+You may read and change the context from your client-side JavaScript:
+
+```js
+up.layer.on('heart:collected', function() {
+  up.context.lives++
+})
+```
+
+You may read and change the context from the server:
+
+```ruby
+class GamesController < ApplicationController
+
+  def restart
+    up.context[:lives] = 3
+    render 'stage1'
+  end
+
+end
+```
+
+---
+
+Use case: Re-using interactions in an overlay, but with a variation
+--------------------------------------------------------------------
+
+Context is useful when you want to re-use an existing interaction in an overlay, but make a slight variation.
+
+- Assume you want to re-use your existing contacts index for a contact picker widget.
+- The contact picker opens the context index in an overlay where the user can choose a contact.
+- In this case the contact index should show an additional message "Pick a contact for project Foo", replacing `Foo` with the actual name of the project.
+
+---
+
+We can implement such an contact picker with this ERB template:
+
+```erb
+<% form_for @project do |form| %>
+
+  Contact: <%= form.object.contact %>
+
+  <a href='/contacts'
+    up-layer='new'
+    up-accept-location='/contacts/*'
+    up-context='<%= { project: @project.name }.to_json %>'>
+    Pick a contact
+  </a>
+
+  ...
+<% end %>
+```
+
+Our effective contact object would now be something like `{ project: 'Hosting 2021' }`.
+
+---
+
+The server can inspect the context in `/contacts/index.erb`:
+
+```erb
+<% if up.context[:project] %>
+  Pick a contact for <%= up.context[:project] %>:
+<% else %>  
+  List of contacts
+<% end %>
+
+<% @contacts.each do |contact| %>
+  <li>...</li>
+<% end %>  
+```
+
+---
+
+New overlay HTML structure
+===========================
+
+Unpoly 2 uses a more compact HTML markup for its overlays.\
+If you have customized your modals and popup with CSS, this is a breaking change for you.
+
+Luckily the new HTML structure is very similiar:
+
+<div class="row">
+<div class="col">
+
+## Old modal HTML
+
+```html
+<div class="up-modal">
+  <div class="up-modal-viewport">
+    <div class="up-modal-dialog">
+      <div class="up-modal-content">...</div>
+      <div class="up-modal-dismiss">×</div>
+    </div>
+  </div>
+</div>
+```
+
+</div>
+<div class="col">
+
+## New modal HTML
+
+```html
+<up-modal>
+  <up-modal-viewport>
+    <up-modal-box>
+      <up-modal-content>...</div>
+      <up-modal-dismiss>×</up-modal-dismiss>
+    </up-modal-box>
+  </up-modal-viewport>
+</up-modal>
+```
+
+</div>
+</div>
+
+The HTML of other overlay modes was changed in the same way (e.g. `<up-popup>`).
+
+
+---
+
+Customizing overlays with CSS
+=============================
+
+If you have modified the appearance with CSS, you need to update your selectors.
+
+### Old CSS
+
+```css
+.up-popup-content {
+  background-color: #eeeeee;
+}
+```
+
+### New CSS
+
+```css
+up-popup-content {
+  background-color: #eeeeee;
+}
+```
+
+---
+
+Overlay classes
+===============
+
+You can assign a class to the overlay you're opening.
+
+
+<div class="row">
+<div class="col">
+
+### JavaScript
+
+```js
+up.layer.open({
+  url: '/confirm-erase',
+  method: 'delete',
+  class: 'warning'
+})
+```
+
+</div>
+<div class="col">
+
+### HTML
+
+```html
+<a href="/confirm-erase"
+  up-method="delete"
+  up-layer="new"
+  up-class="warning">
+  Erase disk
+</a>
+```
+
+</div>
+</div>
+
+---
+
+The class will be assigned to the layer element:
+
+```html
+<up-modal class="warning">
+  ...
+</up-modal>
+```
+
+You can now style "warning modals" in your CSS:
+
+```css
+up-modal.warning up-modal-box {
+  background-color: yellow
+}
+```
+
+---
+
+Overlay sizes
+=============
+
+**💡 In Unpoly 1, overlays grew with the size of the content. 
+This was impractical because\
+a single long line of text would stretch the overlay to its maximum width.**
+
+Because of this most projects have configured modals to have a fixed size.\
+Many projects also have hacks to open modals with different sizes.
+
+In Unpoly 2 all overlays have a given **size** that sets a maximum width:
+
+```html
+<a href="/path" up-layer="new" up-size="small">open small modal</a>
+<a href="/path" up-layer="new" up-size="medium">open medium modal</a>
+<a href="/path" up-layer="new" up-size="large">open large modal</a>
+<a href="/path" up-layer="new" up-size="auto">open growing modal</a>
+```
+
+---
+
+## Default sizes
+
+| Mode   | small | medium | large  | grow |
+| ------:| -----:| ------:| ------:|-----------------|
+| `modal`  | `350px` | `650px` | `1000px` | grow  with content |
+| `popup`  | `180px` | `300px` | `550px`  | grow  with content |
+| `drawer` | `150px` | `340px` | `600px`  | grow  with content |
+| `cover`  | `100%`  | `100%`  | `100%`   | `100%` |
+
+<br>
+
+These are generally wider than Bootstrap's counterparts.
+
+Regardless of size, overlays never grow wider than the screen width.
+
+---
+
+## Customizing overlay sizes
+
+You can customize sizes with CSS:
+
+```css
+up-modal[size=medium] up-modal-box {
+  width: 500px;
+}
+```
+
+---
+
+Customizing overlay HTML
+========================
+
+The HTML markup for a given overlay mode is now static.\
+There is no `up.modal.config.template` anymore.
+
+Many former use cases for `up.modal.config.template` are covered by assigning a class or size.
+
+If you do need to customize the overlay HTML, you may use the `up:layer:opened` event to modify the layer as it becomes visible. The event is emitted
+before the opening animation starts.
+
+```js
+up.on('up:layer:opened', function(event) {
+  if (isChristmas()) {
+    up.element.affix(event.layer.element, '.santa-hat', text: 'Merry Christmas!')
+  }
+})
+```
+
+---
+
+Drawers and modal "flavors"
+===========================
+
+Drawer overlays used to be a modal "flavor" in Unpoly 1.\
+They shared their HTML markup with
+standard modal overlays.
+
+There is no `up.modal.flavors` in Unpoly 2 anymore.
+
+Drawers are now a first-class overlay
+mode with their own `<up-drawer>` element.
+
+There is currently no API to define a custom overlay mode.
+
+---
+
+New layer mode: Cover
+=====================
+
+Unpoly 2 ships with a new layer mode called `cover`.
+
+It overlays the *entire* page, including application layout.\
+It brings its own scrollbar.
+
+```html
+<a href="/path" up-layer="new cover">
+```
+
+You often see cover overlays in mobile apps, e.g. on settings screens.
+
+
+
+---
+
+Dismissability can be fine-tuned
+================================
+
+In Unpoly 1 you could prevent a user from closing a layer with the `{ closable: false }` option.
+
+In Unpoly 2 you may choose which closing methods are available to the user:
+
+| Option                   | Effect                                           | Dismiss value |
+| ------------------------ | ------------------------------------------------ | ------------- |
+| `{ keyDismissable }`     | Enables dimissing with Escape key                | `:key`        |
+| `{ outsideDismissable }` | Enables dismissing by clicking on the background | `:outside`    |
+| `{ buttonDismissable }`  | Adds an "X" button to the layer                  | `:button`     |
+
+You may also enable or disable *all* closing methods together with the `{ dismissable }` option.
+
+
+
+---
+
+Overlays without history
+========================
+
+**💡 Modals without history required too much code in Unpoly 1.**
+
+In Unpoly 1 you could use `{ history: false }` to open an overlay without updating the browser history. However, every user navigation within that overlay *would* affect history, unless you had `[up-history=false]` on *every* link. This is impractical, since a link should not need to know whether it is used within an overlay.
+
+Unpoly 2 reworks that behavior to what you would expect:
+
+- When an overlay is opened without history, no contained link or form will ever update history.
+- When an overlay without history opens another overlay, that other overlay will never update history.
+- Layers without history know their current location URL (`up.layer.location`).
+- Layers without history support the `.up-current` class.
+
+
+
+
+---
 
 # Sub-interactions
 
 ---
-<!-- _class: pro -->
 
 Why we need sub-interactions
 ============================
@@ -793,7 +1092,7 @@ This story is the base use case for a sub-interaction:
   The project form should now have the newly created company selected.
 
 ----
-<!-- _class: pro no-watermark no-padding -->
+<!-- _class: no-watermark no-padding -->
 
 <img src="images/subinteraction-flow.svg" height="100%">
 
@@ -1070,7 +1369,6 @@ up.layer.open({
 ```
 
 ---
-<!-- _class: pro -->
 
 Overlays are promises
 =====================
@@ -1089,408 +1387,14 @@ let user = await up.layer.ask({ url: '/users/new' })
 console.log("New user is " + user)
 ```
 
----
-<!-- _class: pro -->
 
-Layer context
-=============
-
-The web platform gives you several tools to persist state across requests,\
-like cookies or session storage.
-
-But with overlays you need to store state *per layer*.
-
-Unpoly adds *layer context*, a key/value store that exists for
-the lifetime of a layer:
-
-
-| Store              | Scope  | Persistence    | Values     | Client-manageable | Server-manageable |
-|--------------------|--------|----------------|------------|-------------------|-------------------|
-| Local storage      | Domain | Permanentish   | String     | Yes               | &ndash;           |
-| Cookies            | Domain | Configurable   | String     | Configurable      | Yes               |
-| Session storage    | Tab    | Session        | String     | Yes               | &ndash;           |
-| Layer context 🆕   | Layer  | Session        | Object      | Yes               | Yes               |
-
-
----
-<!-- _class: pro -->
-
-Initializing the context object
--------------------------------
-
-The default context is an empty object (`{}`).
-
-You may initialize the context object when opening a layer:
-
-```js
-up.layer.open({ url: '/games/new', context: { lives: 3 } })
-```
-
-Or from HTML:
-
-```html
-<a href='/games/new' up-layer='new' up-context='{ "lives": 3 }'>
-  Start a new game
-</a>  
-```
-
----
-<!-- _class: pro -->
-
-Working with the context object
--------------------------------
-
-You may read and change the context from your client-side JavaScript:
-
-```js
-up.layer.on('heart:collected', function() {
-  up.context.lives++
-})
-```
-
-You may read and change the context from the server:
-
-```ruby
-class GamesController < ApplicationController
-
-  def restart
-    up.context[:lives] = 3
-    render 'stage1'
-  end
-
-end
-```
-
----
-
-Use case: Re-using interactions in an overlay, but with a variation
---------------------------------------------------------------------
-
-Context is useful when you want to re-use an existing interaction in an overlay, but make a slight variation.
-
-- Assume you want to re-use your existing contacts index for a contact picker widget.
-- The contact picker opens the context index in an overlay where the user can choose a contact.
-- In this case the contact index should show an additional message "Pick a contact for project Foo", replacing `Foo` with the actual name of the project.
-
----
-
-We can implement such an contact picker with this ERB template:
-
-```erb
-<% form_for @project do |form| %>
-
-  Contact: <%= form.object.contact %>
-
-  <a href='/contacts'
-    up-layer='new'
-    up-accept-location='/contacts/*'
-    up-context='<%= { project: @project.name }.to_json %>'>
-    Pick a contact
-  </a>
-
-  ...
-<% end %>
-```
-
-Our effective contact object would now be something like `{ project: 'Hosting 2021' }`.
-
----
-
-The server can inspect the context in `/contacts/index.erb`:
-
-```erb
-<% if up.context[:project] %>
-  Pick a contact for <%= up.context[:project] %>:
-<% else %>  
-  List of contacts
-<% end %>
-
-<% @contacts.each do |contact| %>
-  <li>...</li>
-<% end %>  
-```
-
----
-<!-- _class: pro -->
-
-
-New overlay HTML structure
-===========================
-
-Unpoly 2 uses a more compact HTML markup for its overlays.\
-If you have customized your modals and popup with CSS, this is a breaking change for you.
-
-Luckily the new HTML structure is very similiar:
-
-<div class="row">
-<div class="col">
-
-## Old modal HTML
-
-```html
-<div class="up-modal">
-  <div class="up-modal-viewport">
-    <div class="up-modal-dialog">
-      <div class="up-modal-content">...</div>
-      <div class="up-modal-dismiss">×</div>
-    </div>
-  </div>
-</div>
-```
-
-</div>
-<div class="col">
-
-## New modal HTML
-
-```html
-<up-modal>
-  <up-modal-viewport>
-    <up-modal-box>
-      <up-modal-content>...</div>
-      <up-modal-dismiss>×</up-modal-dismiss>
-    </up-modal-box>
-  </up-modal-viewport>
-</up-modal>
-```
-
-</div>
-</div>
-
-The HTML of other overlay modes was changed in the same way (e.g. `<up-popup>`).
-
-
----
-<!-- _class: pro -->
-
-
-Customizing overlays with CSS
-=============================
-
-If you have modified the appearance with CSS, you need to update your selectors.
-
-### Old CSS
-
-```css
-.up-popup-content {
-  background-color: #eeeeee;
-}
-```
-
-### New CSS
-
-```css
-up-popup-content {
-  background-color: #eeeeee;
-}
-```
-
----
-<!-- _class: pro -->
-
-Overlay classes
-===============
-
-You can assign a class to the overlay you're opening.
-
-
-<div class="row">
-<div class="col">
-
-### JavaScript
-
-```js
-up.layer.open({
-  url: '/confirm-erase',
-  method: 'delete',
-  class: 'warning'
-})
-```
-
-</div>
-<div class="col">
-
-### HTML
-
-```html
-<a href="/confirm-erase"
-  up-method="delete"
-  up-layer="new"
-  up-class="warning">
-  Erase disk
-</a>
-```
-
-</div>
-</div>
-
----
-
-The class will be assigned to the layer element:
-
-```html
-<up-modal class="warning">
-  ...
-</up-modal>
-```
-
-You can now style "warning modals" in your CSS:
-
-```css
-up-modal.warning up-modal-box {
-  background-color: yellow
-}
-```
-
----
-<!-- _class: pro -->
-
-Overlay sizes
-=============
-
-**💡 In Unpoly 1, overlays grew with the size of the content. 
-This was impractical because\
-a single long line of text would stretch the overlay to its maximum width.**
-
-Because of this most projects have configured modals to have a fixed size.\
-Many projects also have hacks to open modals with different sizes.
-
-In Unpoly 2 all overlays have a given **size** that sets a maximum width:
-
-```html
-<a href="/path" up-layer="new" up-size="small">open small modal</a>
-<a href="/path" up-layer="new" up-size="medium">open medium modal</a>
-<a href="/path" up-layer="new" up-size="large">open large modal</a>
-<a href="/path" up-layer="new" up-size="auto">open growing modal</a>
-```
-
----
-
-## Default sizes
-
-| Mode   | small | medium | large  | auto |
-| ------:| -----:| ------:| ------:|-----------------|
-| `modal`  | `350px` | `650px` | `1000px` | grow  with content |
-| `popup`  | `180px` | `300px` | `550px`  | grow  with content |
-| `drawer` | `150px` | `340px` | `600px`  | grow  with content |
-| `cover`  | `100%`  | `100%`  | `100%`   | `100%` |
-
-<br>
-
-These are generally wider than Bootstrap's counterparts.
-
-Regardless of size, overlays never grow wider than the screen width.
-
----
-
-## Customizing overlay sizes
-
-You can customize sizes with CSS:
-
-```css
-up-modal[size=medium] up-modal-box {
-  width: 300px;
-}
-```
-
----
-<!-- _class: pro -->
-
-Dismissability can be fine-tuned
-================================
-
-In Unpoly 1 you could prevent a user from closing a layer with the `{ closable: false }` option.
-
-In Unpoly 2 you may choose which closing methods are available to the user:
-
-| Option                   | Effect                                           | Dismiss value |
-| ------------------------ | ------------------------------------------------ | ------------- |
-| `{ keyDismissable }`     | Enables dimissing with escape key                | `:key`        |
-| `{ outsideDismissable }` | Enables dismissing by clicking on the background | `:outside`    |
-| `{ buttonDismissable }`  | Adds an "X" button to the layer                  | `:button`     |
-
-You may also enable or disable *all* closing methods together with the `{ dismissable }` option.
-
-
----
-<!-- _class: pro -->
-
-Customizing overlay HTML
-========================
-
-The HTML markup for a given overlay mode is now static.\
-There is no `up.modal.config.template` anymore.
-
-Many former use cases for `up.modal.config.template` are covered by assigning a class or size.
-
-If you do need to customize the overlay HTML, you may use the `up:layer:opened` event to modify the layer as it becomes visible. The event is emitted
-before the opening animation starts.
-
-```js
-if (isChristmas()) {
-  up.on('up:layer:opened', function(event) {
-    up.element.affix(event.layer.element, '.santa-hat', text: 'Merry Christmas!')
-  })
-}
-```
-
----
-
-Drawers and modal "flavors"
-===========================
-
-Drawer overlays used to be a modal "flavor" in Unpoly 1.\
-They shared their HTML markup with
-standard modal overlays.
-
-There is no `up.modal.flavors` in Unpoly 2 anymore.
-
-Drawers are now a first-class overlay
-mode with their own `<up-drawer>` element.
-
-There is currently no API to define a custom overlay mode.
-
----
-<!-- _class: pro -->
-
-New layer mode: Cover
-=====================
-
-Unpoly 2 ships with a new layer mode called `cover`.
-
-It overlays the *entire* page, including application layout.\
-It brings its own scrollbar.
-
-```html
-<a href="/path" up-layer="new" up-mode="cover">
-```
-
-You often see cover overlays in mobile apps, e.g. on settings screens.
-
----
-<!-- _class: pro -->
-
-Overlays without history
-========================
-
-**💡 Modals without history required too much code in Unpoly 1.**
-
-In Unpoly 1 you could use `{ history: false }` to open an overlay without updating the browser history. However, every user navigation within that overlay *would* affect history, unless you had `[up-history=false]` on *every* link. This is impractical, since a link should not need to know whether it is used within an overlay.
-
-Unpoly 2 reworks that behavior to what you would expect:
-
-- When an overlay is opened without history, no contained link or form will ever update history.
-- When an overlay without history opens another overlay, that other overlay will never update history.
-- Layers without history know their location (`up.layer.location`).
-- Layers without history support the `.up-current` class.
 
 ----
-<!-- _class: pro topic -->
+<!-- _class: topic -->
 
 # Navigation intent
 
 ---
-<!-- _class: pro -->
 
 Switching screens vs. updating boxes
 ====================================
@@ -1508,8 +1412,6 @@ While these are good defaults when the user follows a link a to *navigate* to a 
 they get in the way when you only want to update a small box.
 
 ----
-<!-- _class: pro -->
-
 Actual usage often looked like this:
 
 ```js
@@ -1522,7 +1424,6 @@ up.replace('.message-count', '/inbox', {
 ```
 
 ----
-<!-- _class: pro -->
 
 Unpoly 2 defaults are opt-in, not opt-out
 =========================================
@@ -1544,7 +1445,6 @@ up.render('.message-count', { url: '/inbox', history: true })
 ```
 
 ---
-<!-- _class: pro -->
 
 ## Navigation defaults
 
@@ -1563,7 +1463,6 @@ up.navigate('.content', { url: '/inbox' })
 
 
 ---
-
 <!-- _class: no-watermark -->
 
 ## Full list of navigation defaults
@@ -1595,21 +1494,14 @@ That's was the behavior in Unpoly 1, and we don't want to break your apps.
 
 
 
-
-
-
-
-
-
 ---
 <!-- _class: topic new --->
 
-<h1>Accessibility <span class="muted">(A11Y)</span></h1>
+<h1>Accessibility <span style="font-weight: normal">🆕</span></h1>
 
 ---
 
 <!-- _class: new -->
-
 
 # Types of disabilities
 
@@ -1654,6 +1546,15 @@ A good screen reader for Chrome is the [Screen Reader extension](https://chrome.
 | `ALT+Shift+O > O` | Show all keyboard shortcuts |
 
 
+----
+
+<div class="muted">
+
+(Share chrome tab for sound)
+
+</div>
+
+
 
 -----
 <!-- _class: new -->
@@ -1668,14 +1569,14 @@ It's not great, but it's mostly OK.
 
 As soon as you change content with JavaScript you will probably break screen readers without further testing:
 
+- Focus is not moved to new content when navigating
 - Interactive elements are not focusable
 - Interactive elements are not announced as such
 - Interactive elements cannot be activated with the keyboard
-- Focus is not moved to new content when navigating
 
 <br>
 
-🎥 *Demo with VoiceVox on <https://railslts.com>* (share Chrome tab for sound!)
+🎥 *Demo with VoiceVox on <https://railslts.com>*
 
 
 
@@ -1712,7 +1613,11 @@ The reading position is always moved to the next logical element.
 
 ----
 
+<div class="muted">
+
 (Reset screen sharing)
+
+</div>
 
 
 ----
@@ -1728,6 +1633,7 @@ More precisely, Unpoly will try **in this order**:
 
 - Focus a `#hash` in the URL
 - Focus an `[autofocus]` element in the new fragment
+- Focus the new fragment **if** focus was lost with the old fragment (prevent reset to `<body>`)
 - Focus the new fragment **if** it matches a main target
 
 You may configure this behavior with `up.fragment.config.autoFocus`,\
@@ -1746,34 +1652,25 @@ Use it to **explicitely move** the user's focus as you update fragments.
 This would focus the `.avatar` element in the new fragment:
 
 ```html
-<a href="/users/5" up-focus=".avatar">Load profile</a>
+<a href="/users/5" up-follow up-focus=".avatar">Load profile</a>
 ```
 
 
 ----
 <!-- _class: new -->
 
-Focus options
--------------
-
 | Focus option | Meaning |
 |-------------|---------|
 | `keep`      | Preserve focus if possible |
 | `target`    | Focus the updated fragment |
+| `target-if-main`    | Focus the updated fragment if it is a main target |
+| `target-if-lost`    | Focus the updated fragment if focus was lost with the old fragment |
 | `layer`     | Focus the updated layer |
 | `autofocus` | Focus any `[autofocus]` elements in the new fragment |
 | `hash`      | Focus the URL's `#hash` target (if any) |
-| `auto`      | Focus the updated fragment if it's a main target |
+| `auto`      | Smart logic for navigation (see earlier slides) |
 | `<Element>`     | Focus this element |
 | `.css-selector` | Focus an element matching this CSS selector |
-
-
-
----
-<!-- _class: new -->
-
-When you set the `{ scroll }` option you should also think about setting the `{ focus }` option.
-
 
 ---
 <!-- _class: new -->
@@ -1792,6 +1689,9 @@ When the focused fragment is rediscovered in the new content, the following prop
 When validating with `[up-validate]`, Unpoly will preserve focus when possible.
 
 
+
+
+
 ---
 <!-- _class: new -->
 
@@ -1806,6 +1706,21 @@ Unpoly 2 follows best practices for controlling focus in overlays:
 
 - While the modal is open, focus is trapped in a cycle within the overlay.\
   The user cannot focus elements outside the overlay.
+
+
+
+---
+<!-- _class: new -->
+
+## Focus handling summarized
+
+Unpoly 2 has sensible defaults for guiding focus.
+
+If you want to optimize accessibility for your app, use the `{ focus }` option.
+
+When you use an explicit `{ scroll }` option, think about also setting the `{ focus }` option.
+
+
 
 
 ---
@@ -1849,7 +1764,7 @@ Some of these features were backported to Unpoly 0.62.
 ---
 <!-- _class: topic pro -->
 
-# Quality of life improvements
+# Quality of life improvements 🤿
 
 
 ---
@@ -2083,13 +1998,13 @@ The `{ scroll }` option accepts one of the following values:
 |----------------------|-------------------------------------------------|
 | `false`              | Don't scroll                                    |
 | `target`           | Reveal the updated fragment (Unpoly 1 default)  |
-| `top`              | Scroll to the top                               |
+| `reset`              | Scroll to the top                               |
 | `restore`          | Restore last known scroll position for URL      |
 | `hash`             | Scroll to a #hash in the updated URL            |
 | `.css-selector`      | The CSS selector of the element to reveal       |
 | `<Element>`            | Reveal the given element                        |
 | `<Function(fragment)>` | Custom scrolling logic                          |
-| `auto`             | Scroll to the top **if** updating a main target (see below) |
+| `auto`             | Smart logic for navigation (see next slides) |
 
 ---
 <!-- _class: pro -->
@@ -2108,7 +2023,7 @@ This default was chosen to reset scroll positions when navigating to another scr
 - *Follow a link in the navigation to a second page*
 - *Explain how without revealing, the second page would open with the first page's scroll positions*
 
-However, this default also casued scrolling when a smaller fragment was updated.\
+However, this default also caused scrolling when a smaller fragment was updated.\
 E.g. when the user switches between tabs, they wouldn't expect scroll changes.
 
 ---
@@ -2716,15 +2631,18 @@ Event handlers may prevent these events to cancel the fragment update.
 
 ## Basic example
 
+The code below will open all form-contained links in an overlay, as to not
+lose the user's form data:
 
 ```js
-up.on('up:form:submit', function(event) {
-  event.renderOptions.failScroll = '.error-message'
-  event.renderOptions.failTransition = 'shake'
+up.on('up:link:follow', function(event, link) {
+  if (link.closest('form')) {
+    event.renderOptions.layer = 'new'
+  }
 })
 ```
 
-If you have compilers that only set default attributes, consider using a single event listener that manipulates `event.renderOptions` instead. It's much leaner than a compiler, which needs to be called for every new fragment.
+If you have compilers that only set default attributes, consider using a single event listener that manipulates `event.renderOptions`. It's much leaner than a compiler, which needs to be called for every new fragment.
 
 ---
 <!-- _class: pro -->
@@ -2748,7 +2666,7 @@ up.on('up:link:follow', 'a[require-session]', async function(event) {
   if (!isSignedIn()) {
     event.preventDefault()
     await up.layer.ask('/session/new', { acceptLocation: '/welcome' })
-    render(event.renderOptions)
+    up.render(event.renderOptions)
   }
 })
 ```
@@ -2800,7 +2718,7 @@ up.on('up:link:follow', '.add-contact', function(event) {
 up.proxy is now up.network
 ==========================
 
-Your calls will be forwarded.
+All functions are aliased by `unpoly-migrate.js`.
 
 
 ---
@@ -2932,7 +2850,7 @@ The following will make a full page load if any fragment update responds
 with a maintenance page:
 
 ```js
-up.on('up:fragment:loaded', (event) => {
+up.on('up:fragment:loaded', function(event) {
   let isMaintenancePage = event.response.getHeader('X-Maintenance')
 
   if (isMaintenancePage) {
@@ -3001,7 +2919,7 @@ New, unopionated Bootstrap integration.
 ### Layer API
 
 A new layer API replaces modals and popups.\
-Layers are isolated and can be stacked infinitly.
+Layers are isolated and can be stacked infinitely.
 
 ### Sub-interactions
 
