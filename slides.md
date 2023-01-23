@@ -25,17 +25,6 @@ It enables fast and flexible frontends while keeping rendering logic on the serv
 who want to learn about the major changes in Unpoly 2.**
 
 
----
-
-
-Roadmap
-=======
-
-There will be two major Unpoly releases in **2021**:
-
-- The current version 0.62 will be published as **Unpoly 1.0**.
-- **Unpoly 2.0** will be released as a major upgrade.
-
 ----
 
 Unpoly 2?
@@ -391,7 +380,6 @@ For example, Unpoly tried to re-use the Bootstrap modal styles, but most project
 Unpoly 2 now ships with a **unopinionated Bootstrap integration**.
 
 ---
-<!-- _class: pro -->
 
 This is all of `unpoly-bootstrap4.js`:
 
@@ -515,7 +503,6 @@ If there is no `[up-layer]` attribute, you are going to update the current layer
 
 
 ----
-<!-- _class: pro -->
 
 ## CSS selectors are matched in the current layer
 
@@ -541,7 +528,7 @@ up.fragment.get(element, '.child') // will find .child in element's descendants
 ```
 
 ---
-<!-- _class: pro no-watermark -->
+<!-- _class: no-watermark -->
 
 <h2 class="center">Referring to layers</h2>
 
@@ -652,11 +639,7 @@ dismissCurrentLayerIn(10) //
 ```
 
 
-
-
-
 ---
-<!-- _class: pro -->
 
 Inspecting the layer from the server
 ====================================
@@ -681,7 +664,6 @@ up.fail_layer.mode      # 'root'
 
 
 ---
-<!-- _class: pro -->
 
 Layer context
 =============
@@ -704,7 +686,6 @@ the lifetime of a layer:
 
 
 ---
-<!-- _class: pro -->
 
 Initializing the context object
 -------------------------------
@@ -726,7 +707,6 @@ Or from HTML:
 ```
 
 ---
-<!-- _class: pro -->
 
 Working with the context object
 -------------------------------
@@ -1342,13 +1322,11 @@ For this Unpoly 2 distinguishes two kinds close intents:
 
 
 ---
-<!-- _class: pro no-watermark -->
+<!-- _class: no-watermark -->
 
 <img src="images/close-intent.png" class="picture">
 
 ---
-<!-- _class: pro -->
-
 
 <h2>
   <span class="positive">Acceptance</span> means next step<br>
@@ -1495,13 +1473,11 @@ That's was the behavior in Unpoly 1, and we don't want to break your apps.
 
 
 ---
-<!-- _class: topic new --->
+<!-- _class: topic --->
 
-<h1>Accessibility <span style="font-weight: normal">🆕</span></h1>
+<h1>Accessibility</h1>
 
 ---
-
-<!-- _class: new -->
 
 # Types of disabilities
 
@@ -1516,9 +1492,6 @@ As a user with one or both of these impairements I might use a **screen reader**
 
 ---
 
-<!-- _class: new -->
-
-
 # Screen readers
 
 Screen readers use speech synthesis that read a webpage aloud.
@@ -1529,7 +1502,6 @@ A good screen reader for Chrome is the [Screen Reader extension](https://chrome.
 
 
 ---
-<!-- _class: new -->
 
 ## Some keyboard shortcuts
 
@@ -1557,7 +1529,6 @@ A good screen reader for Chrome is the [Screen Reader extension](https://chrome.
 
 
 -----
-<!-- _class: new -->
 
 
 ## Breaking screen readers with JavaScript
@@ -1582,7 +1553,6 @@ As soon as you change content with JavaScript you will probably break screen rea
 
 
 ----
-<!-- _class: new -->
 
 # Focus is "scrolling for your ears"
 
@@ -1593,9 +1563,6 @@ consider whether also you want to move the reading position to that element.**
 
 
 ---
-
-<!-- _class: new -->
-
 
 # Automatic focus management in Unpoly 2
 
@@ -1621,7 +1588,6 @@ The reading position is always moved to the next logical element.
 
 
 ----
-<!-- _class: new -->
 
 ## How focus is moved by default
 
@@ -1640,7 +1606,6 @@ You may configure this behavior with `up.fragment.config.autoFocus`,\
 e.g. to auto-focus headlines or error messages.
 
 ---
-<!-- _class: new -->
 
 ## Explicit focus control
 
@@ -1657,7 +1622,6 @@ This would focus the `.avatar` element in the new fragment:
 
 
 ----
-<!-- _class: new -->
 
 | Focus option | Meaning |
 |-------------|---------|
@@ -1673,7 +1637,6 @@ This would focus the `.avatar` element in the new fragment:
 | `.css-selector` | Focus an element matching this CSS selector |
 
 ---
-<!-- _class: new -->
 
 ## Preserving focus
 
@@ -1693,7 +1656,6 @@ When validating with `[up-validate]`, Unpoly will preserve focus when possible.
 
 
 ---
-<!-- _class: new -->
 
 ## Focus in overlays
 
@@ -1710,7 +1672,6 @@ Unpoly 2 follows best practices for controlling focus in overlays:
 
 
 ---
-<!-- _class: new -->
 
 ## Focus handling summarized
 
@@ -1724,8 +1685,6 @@ When you use an explicit `{ scroll }` option, think about also setting the `{ fo
 
 
 ---
-
-<!-- _class: new -->
 
 Accessible JavaScript buttons
 =============================
@@ -1744,7 +1703,6 @@ It works for all elements, not just Unpoly links.
 If you can't control the markup of your inaccessible JavaScript control, add its selector to `up.fragment.config.clickableSelectors`.
 
 ---
-<!-- _class: pro -->
 
 Various A11Y improvements
 =========================
@@ -1759,16 +1717,12 @@ Some of these features were backported to Unpoly 0.62.
 
 
 
+---
+
+# Quality of life improvements
 
 
 ---
-<!-- _class: topic pro -->
-
-# Quality of life improvements 🤿
-
-
----
-<!-- _class: pro -->
 
 Self-contained components
 =========================
@@ -1783,8 +1737,6 @@ In Unpoly 2 the position of a clicked link is considered when deciding which ele
 
 
 ---
-
-<!-- _class: pro -->
 
 Example
 --------
@@ -1815,9 +1767,6 @@ Let's say we have three links that replace `.card`:
 
 
 ---
-
-<!-- _class: pro -->
-
 
 This also works with descendant selectors:
 
@@ -1909,7 +1858,6 @@ Calmer log
 
 
 ---
-<!-- _class: pro -->
 
 Dealing with compiler errors
 ============================
@@ -1924,7 +1872,6 @@ In Unpoly 2 a fragment update will always terminate cleanly:
 In any case errors will be logged.
 
 ---
-<!-- _class: pro -->
 
 up:click
 ========
@@ -1939,7 +1886,6 @@ a link is `[up-instant]`.
 
 
 ---
-<!-- _class: pro -->
 
 Example
 -------
@@ -1968,7 +1914,6 @@ document.addEventListener('up:click', function(event) {
 ```
 
 ---
-<!-- _class: pro -->
 
 Cancelation is forwarded
 ------------------------
@@ -1978,7 +1923,6 @@ the underlying `click` or `mousedown` will also be canceled.
 
 
 ----
-<!-- _class: pro -->
 
 Unified scroll options
 ======================
@@ -1989,8 +1933,6 @@ Unpoly 1 had multiple scroll-related options
 Unpoly 2 has unified these options into single option `{ scroll }` (`[up-scroll]` in HTML).
 
 -----
-<!-- _class: new -->
-
 
 The `{ scroll }` option accepts one of the following values:
 
@@ -2007,7 +1949,6 @@ The `{ scroll }` option accepts one of the following values:
 | `auto`             | Smart logic for navigation (see next slides) |
 
 ---
-<!-- _class: pro -->
 
 Calmer scrolling
 ================
@@ -2027,7 +1968,6 @@ However, this default also caused scrolling when a smaller fragment was updated.
 E.g. when the user switches between tabs, they wouldn't expect scroll changes.
 
 ---
-<!-- _class: pro -->
 
 ## Unpoly 2 no longer scrolls by default
 
@@ -2049,7 +1989,7 @@ Tuning the scroll effect
 | -------------------- | --------------------------------------------- | ----------------------- |
 | `{ revealPadding }`  | Pixels between element and viewport edge      | `0`                     |
 | `{ revealTop }`      | Whether to move a revealed element to the top | `false`                 |
-| `{ revealMax }` 🆕   | How much of a high element to reveal          | `0.5 * innerHeight`     |
+| `{ revealMax }`      | How much of a high element to reveal          | `0.5 * innerHeight`     |
 | `{ revealSnap }`     | When to snap to the top edge                  | `200`                   |
 | `{ scrollBehavior }` | auto/smooth                                   | `'auto'` (no animation) |
 | `{ scrollSpeed }`    | Acceleration of smooth scrolling              | `1` (mimic Chrome)      |
@@ -2058,7 +1998,6 @@ Tuning the scroll effect
 
 
 ---
-<!-- _class: pro -->
 
 # History is updated less often
 
@@ -2073,7 +2012,6 @@ When navigating the new default is `{ history: 'auto' }`, which *sometimes* upda
 You may configure this behavior with `up.fragment.config.autoHistory`.
 
 ---
-<!-- _class: pro -->
 
 Smarter bandwidth usage
 =======================
@@ -2086,7 +2024,6 @@ Smarter bandwidth usage
 - Preloading is now automatically disabled on slow connections
 
 ---
-<!-- _class: pro -->
 
 Slow connection?
 ----------------
@@ -2305,7 +2242,6 @@ This will render a 200 OK response with a header `X-Up-Target: :none` and an emp
 
 
 ---
-<!-- _class: pro -->
 
 Optimizing cacheability
 =======================
@@ -2325,7 +2261,6 @@ The server may return an optimized response based on these properties,
 e.g. by omitting a navigation bar that is not targeted.
 
 ---
-<!-- _class: pro -->
 
  To **improve cacheability**, you may may set
 `up.network.config.requestMetaKeys` to a shorter list of property keys:
@@ -2352,7 +2287,6 @@ up.network.config.requestMetaKeys = function(request) {
 
 
 ---
-<!-- _class: pro -->
 
 Request meta information persists across redirects
 ==================================================
@@ -2369,7 +2303,7 @@ X-Up-Mode: root
 In Unpoly 1, these headers were lost after a redirect.\
 Subsequent requests would see a non-Unpoly request.
 
-**In Unpoly 2 meta information is persisted across redirects.**
+**With unpoly-rails 2.0 meta information is persisted across redirects.**
 
 ---
 <!-- _class: no-watermark -->
@@ -2411,7 +2345,7 @@ The cache in Unpoly 1 follows two rules:
 
 These were generally good defaults, but sometimes we would cache too much or clear too much.
 
-**In Unpoly 2 the server can send an `X-Up-Cache` header to better manage the frontend cache.**
+**In Unpoly 2 the server can send an `X-Up-Clear-Cache` header to better manage the frontend cache.**
 
 ---
 
@@ -2493,7 +2427,6 @@ end
 
 
 ----
-<!-- _class: pro -->
 
 Async functions no longer wait for animations
 ================================================
@@ -2512,7 +2445,6 @@ console.log("Hello overlay!") // overlay may still be fading in
 ```
 
 ---
-<!-- _class: pro -->
 
 ## When you need to wait
 
@@ -2608,7 +2540,6 @@ up.render({ target: '.foo', content: 'New inner HTML' }
 ```
 
 ---
-<!-- _class: pro -->
 
 Event handlers may change render options
 ========================================
@@ -2621,13 +2552,13 @@ When the user interacts with links or forms, Unpoly will emit these events:
 - `up:link:preload` (new in Unpoly 2)
 - `up:form:submit`
 - `up:form:validate` (new in Unpoly 2)
+- `up:layer:open` (new in Unpoly 2)
 
 Event handlers may prevent these events to cancel the fragment update.
 
 **Unpoly 2 also lets event listeners read and change render options for the coming fragment update.**
 
 ---
-<!-- _class: pro -->
 
 ## Basic example
 
@@ -2645,7 +2576,6 @@ up.on('up:link:follow', function(event, link) {
 If you have compilers that only set default attributes, consider using a single event listener that manipulates `event.renderOptions`. It's much leaner than a compiler, which needs to be called for every new fragment.
 
 ---
-<!-- _class: pro -->
 
 Advanced example
 ----------------
@@ -2713,7 +2643,6 @@ up.on('up:link:follow', '.add-contact', function(event) {
 
 
 ---
-<!-- _class: pro -->
 
 up.proxy is now up.network
 ==========================
@@ -2722,7 +2651,6 @@ All functions are aliased by `unpoly-migrate.js`.
 
 
 ---
-<!-- _class: pro -->
 
 up.request() rework
 ===================
@@ -2736,7 +2664,6 @@ What `up.request()` was often used for instead:
 - To fetch JSON from APIs.
 
 ---
-<!-- _class: pro -->
 
 Actual usage would often look like this:
 
@@ -2748,7 +2675,6 @@ let json = JSON.parse(response.text)
 `up.request()` was not really designed for that, e.g. every response was automatically cached.
 
 ---
-<!-- _class: pro -->
 
 The cache is off by default
 ---------------------------
@@ -2761,7 +2687,6 @@ Navigation intent will set `{ cache: true }` for you.
 
 
 ---
-<!-- _class: pro -->
 
 Parsing JSON
 ------------
@@ -2774,7 +2699,6 @@ console.log(response.json)
 ```
 
 ---
-<!-- _class: pro -->
 
 Requests are abortable
 ----------------------
@@ -2829,7 +2753,6 @@ That means that classic tooltips won't work on mobile. Consider a clickable popu
 ```
 
 ---
-<!-- _class: pro -->
 
 Handling unexpected server responses
 ====================================
@@ -2842,7 +2765,6 @@ Unpoly 2 emits a new event `up:fragment:loaded` when the server responds with th
 Event listeners may call `event.preventDefault()` on an `up:fragment:loaded` event to prevent any changes to the DOM and browser history. This is useful to detect an entirely different page layout (like a maintenance page or fatal server error) which should be open with a full page load.
 
 ---
-<!-- _class: pro -->
 
 ## Example
 
@@ -2870,7 +2792,6 @@ up.on('up:fragment:loaded', function(event) {
 # Summary
 
 ---
-<!-- _class: pro -->
 
 Breaking changes
 =======================
@@ -2944,18 +2865,6 @@ Extensive rework of almost all APIs.
 </div>
 </div>
 
-
----
-<!-- _class: pro -->
-
-
-Roadmap
-=======
-
-There will be two major Unpoly releases in **early 2021**:
-
-- The current version 0.62 will be published as **Unpoly 1.0**.
-- **Unpoly 2.0** will be released as a major upgrade.
 
 
 ---
